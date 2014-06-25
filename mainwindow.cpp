@@ -9,12 +9,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   //  QTableWidgetItem* naam = new QTableWidgetItem("Hello");
    ui->transactionTable->setColumnWidth(1,134);
-   ui->transactionTable->setRowCount(1);
-
-   QList<jTransaction*> transList;
 
    double amount = 23.87;
-
     jTransactionList lst;
 
    for(int k = 0; k < 500; k++)
