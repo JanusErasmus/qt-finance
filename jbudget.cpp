@@ -26,20 +26,9 @@ void jBudget::readBudget()
     mBudgetFile->read((char*)&version, 4);
     qDebug("Budget File version 0x%08X", version);
 
-    //next 4 bytes lenght of the list
-    quint32 length = 0;
-    mBudgetFile->read((char*)&length, 4);
-    qDebug("List size %d", length);
+    readTransactions();
+    readCategories();
 
-    for(quint32 k = 0; k < length; k++)
-    {
-        jTransaction::sData data;
-        mBudgetFile->read((char*)&data, sizeof(jTransaction::sData));
-
-        jTransaction * trans = new jTransaction(data);
-        //trans->debugShow();
-        mTransList->append(trans);
-    }
 
     mBudgetFile->close();
 }
@@ -47,6 +36,18 @@ void jBudget::readBudget()
 jTransactionList * jBudget::getTransactionList()
 {
     return mTransList;
+}
+
+jCategory* jBudget::getCategory(QString heading)
+{
+    jCategory * cat;
+    foreach(cat, mCategories)
+    {
+        if(cat->getHeading() == heading)
+            return cat;
+    }
+
+    return 0;
 }
 
 
@@ -63,7 +64,7 @@ bool jBudget::save()
 
     //next 4 bytes lenght of the list
     quint32 length = mTransList->size();
-    qDebug("List size %d", length);
+    //qDebug("List size %d", length);
     mBudgetFile->write((const char*)&length, 4);
 
     //now write all the transactions
@@ -71,19 +72,88 @@ bool jBudget::save()
     for(quint32 k = 0; k < length; k++)
     {
         entry = mTransList->at(k);
+
         //entry->debugShow();
-        jTransaction::sData * data = entry->getData();
-        mBudgetFile->write((const char*)data, sizeof(jTransaction::sData));
+        jTransaction::sData data = entry->getData();
+        mBudgetFile->write((const char*)&data, sizeof(jTransaction::sData));
     }
 
-    //end with 16 bytes of zeros
-    quint8 zeros[16];
-    memset(zeros,0,16);
-    mBudgetFile->write((const char*)zeros, 16);
+    //write the categories
+    writeCategories();
 
     mBudgetFile->close();
 
     return true;
+}
+
+void jBudget::readTransactions()
+{
+    //next 4 bytes lenght of the list
+    quint32 length = 0;
+    mBudgetFile->read((char*)&length, 4);
+    //qDebug("List size %d", length);
+
+    for(quint32 k = 0; k < length; k++)
+    {
+        jTransaction::sData data;
+        mBudgetFile->read((char*)&data, sizeof(jTransaction::sData));
+
+        jTransaction * trans = new jTransaction(data);
+        //trans->debugShow();
+        mTransList->append(trans);
+    }
+}
+
+void jBudget::writeCategories()
+{
+    char string[32];
+
+    jCategory * t;
+    foreach(t, mCategories)
+    {
+        //first 4 bytes is the amount of categories
+        quint32 length = t->size();
+        //qDebug("%d Categories", length);
+        mBudgetFile->write((const char*)&length, 4);
+
+        //The next 32 bytes is the category heading
+        t->fillHeading(string, 32);
+        mBudgetFile->write((const char*)string, 32);
+
+        //The following 32 byte packets is the categories
+        for(quint32 k = 0; k < length; k++)
+        {
+            t->fillCategory(k, string, 32);
+            mBudgetFile->write((const char*)string, 32);
+        }
+    }
+}
+
+void jBudget::readCategories()
+{
+     char string[32];
+
+     while(!mBudgetFile->atEnd())
+     {
+         //next 4 bytes lenght of the list
+         quint32 length = 0;
+         mBudgetFile->read((char*)&length, 4);
+         //qDebug("%d Categories", length);
+
+         mBudgetFile->read(string, 32);
+         //qDebug("Heading %s", string);
+
+         jCategory * t = new jCategory(string);
+
+         for(quint32 k = 0; k < length; k++)
+         {
+             mBudgetFile->read(string, 32);
+             //qDebug(" - %s", string);
+             t->addSubCategory(string);
+         }
+
+         mCategories.append(t);
+     }
 }
 
 jBudget::~jBudget()

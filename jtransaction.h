@@ -3,44 +3,52 @@
 #include <QTableWidgetItem>
 #include <QDate>
 
-#ifdef _MSC_VER
-#define PACKED_STRUCT(__struct__) #pragma pack(push,1) __struct__; #pragma pack(pop)
-#elif defined(__GNUC__)
-#  define PACKED_STRUCT(__struct__) __struct__ __attribute__((packed));
-#endif
 
 class jTransaction
 {
 public:
-PACKED_STRUCT(
+#ifdef _MSC_VER
+#pragma pack(push,1)
         struct sData
         {
             quint16 year;
             quint16 month;
             quint16 day;
             unsigned char description[64];
+            unsigned char category[32];
             float amount;
 
             sData();
-        }
-)
+        };
+#pragma pack(pop)
+#elif defined(__GNUC__)
+    struct sData
+    {
+        quint16 year;
+        quint16 month;
+        quint16 day;
+        unsigned char description[64];
+        unsigned char category[32];
+        float amount;
 
+        sData();
+    }__attribute__((packed));
+#endif
 private:
-    sData mData;
-
-    QTableWidgetItem * mDateTableItem;
-    QTableWidgetItem * mDescTableItem;
-    QTableWidgetItem * mAmountTableItem;
+    QDate mDate;
+    QString mCategory;
+    QString mDescription;
+    float mAmount;
 
 public:
     jTransaction();
     jTransaction(sData data);
-    jTransaction(QDate date, QString description, double amount);
+    jTransaction(QDate date, QString category, QString description, double amount);
     ~jTransaction();
 
 
-    sData * getData(){ return &mData; }
-    void debugShow();
+    sData getData();
+    void debugShow(sData data);
 
     void setRow(QTableWidget* table, int row);
 };
