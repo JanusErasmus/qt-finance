@@ -10,12 +10,27 @@ jTransaction::jTransaction(QDate date, QString description, double amount)
 {
     QLocale sar(QLocale::English, QLocale::SouthAfrica);
 
+    mEntry.year = date.year();
+    mEntry.month = date.month();
+    mEntry.day = date.day();
+
     mEntry.amount = amount;
-    strcpy_s((char*)mEntry.description, 64, description.toLocal8Bit().data());
+    strncpy((char*)mEntry.description, description.toLocal8Bit().data(), 64);
 
     mDate = new QTableWidgetItem(sar.toString(date, QLocale::ShortFormat));
     mDescription = new QTableWidgetItem(description);
     mAmount = new QTableWidgetItem(sar.toCurrencyString(amount));
+}
+
+jTransaction::jTransaction(sData data) : mEntry(data)
+{
+    QLocale sar(QLocale::English, QLocale::SouthAfrica);
+
+    QDate date(mEntry.year, mEntry.month, mEntry.day);
+
+    mDate = new QTableWidgetItem(sar.toString(date, QLocale::ShortFormat));
+    mDescription = new QTableWidgetItem(QString((const char*)mEntry.description));
+    mAmount = new QTableWidgetItem(sar.toCurrencyString(mEntry.amount));
 }
 
 void jTransaction::debugShow()
@@ -37,7 +52,11 @@ jTransaction::~jTransaction()
     delete mAmount;
 }
 
-jTransaction::sEntry::sEntry()
+jTransaction::sData::sData()
 {
+    year = 0;
+    month = 0;
+    day = 0;
     memset(description, 0, 64);
+    amount = 0;
 }

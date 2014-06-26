@@ -6,6 +6,8 @@ jBudget::jBudget(QString fileName)
     bool fileExisted = false;
     mBudget = new QFile(fileName);
 
+    mTransList = new jTransactionList();
+
     if(mBudget->exists())
     {
         qDebug("File exists");
@@ -36,12 +38,14 @@ void jBudget::readBudget()
     mBudget->read((char*)&length, 4);
     qDebug("List size %d", length);
 
-    jTransaction * entry = new jTransaction();
     for(quint32 k = 0; k < length; k++)
     {
-        jTransaction::sEntry * data = entry->getEntry();
-        mBudget->read((char*)data, sizeof(jTransaction::sEntry));
-        entry->debugShow();
+        jTransaction::sData data;
+        mBudget->read((char*)&data, sizeof(jTransaction::sData));
+
+        jTransaction * trans = new jTransaction(data);
+        //trans->debugShow();
+        mTransList->append(trans);
     }
 }
 
@@ -55,6 +59,8 @@ bool jBudget::setTransactionList(jTransactionList * list)
 {
     if(!mOpened)
         return false;
+
+    mBudget->seek(0);
 
     //first 4 bytes is the version (qint32)
     qint32 version = VERSION;
@@ -70,9 +76,9 @@ bool jBudget::setTransactionList(jTransactionList * list)
     for(quint32 k = 0; k < length; k++)
     {
         entry = list->at(k);
-        entry->debugShow();
-        jTransaction::sEntry * data = entry->getEntry();
-        mBudget->write((const char*)data, sizeof(jTransaction::sEntry));
+        //entry->debugShow();
+        jTransaction::sData * data = entry->getData();
+        mBudget->write((const char*)data, sizeof(jTransaction::sData));
     }
 
     //end with 16 bytes of zeros
@@ -85,6 +91,8 @@ bool jBudget::setTransactionList(jTransactionList * list)
 
 jBudget::~jBudget()
 {
+    delete mTransList;
+
     if(mOpened)
         mBudget->close();
 }
