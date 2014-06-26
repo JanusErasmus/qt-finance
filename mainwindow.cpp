@@ -1,37 +1,75 @@
+#include <QDebug>
+#include <QFileDialog>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "jbudget.h"
+#include "ui_addTransaction.h"
 #include "jtransactionlist.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {    
+    mBudget = 0;
+
     ui->setupUi(this);
 
-    ui->transactionTable->setColumnWidth(1,134);
+    openBudget("june.jbud");
 
-
-    jBudget * bud = new jBudget("june.jbud");
-    jTransactionList * lst = bud->getTransactionList();
-
-//   double amount = 23.87;
-//   for(int k = 0; k < 5; k++)
-//   {
-//       jTransaction * trans = new jTransaction(QDate(2014,06,24), "Die eerste inskrywing", amount);
-//       lst->append(trans);
-//       amount += 9.23;
-//   }
-
-
-
-    lst->fillTable(ui->transactionTable);
-
-//   if(bud->setTransactionList(lst))
-//       qDebug("File was written");
-
-
-//    delete bud;
 }
+
+void MainWindow::openBudget(QString filename)
+{
+    qDebug() << "Opening" << filename;
+
+    if(mBudget)
+    {
+        delete mBudget;
+        ui->transactionTable->clear();
+    }
+
+    mBudget = new jBudget(filename);
+    jTransactionList * lst = mBudget->getTransactionList();
+    lst->fillTable(ui->transactionTable);
+    ui->transactionTable->scrollToBottom();
+}
+
+void MainWindow::addTransaction()
+{
+    QDialog addDialog(0,0);
+
+    Ui_addTransaction addUi;
+    addUi.setupUi(&addDialog);
+
+    //setup default values of add transaction window
+
+    //read transaction values if OK
+    if(addDialog.exec() == QDialog::Accepted)
+    {
+        jTransactionList * lst = mBudget->getTransactionList();
+        jTransaction * entry = new jTransaction(QDate::currentDate(), addUi.descEdit->text(), addUi.amountEdit->text().toFloat());
+        lst->append(entry);
+
+        int row = ui->transactionTable->rowCount();
+        ui->transactionTable->insertRow(row);
+        entry->setRow(ui->transactionTable, row);
+        ui->transactionTable->scrollToBottom();
+    }
+}
+
+void MainWindow::openBudget()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),".",tr("jBudget Files (*.jbud)"));
+    if(!fileName.isEmpty())
+    {
+        openBudget(fileName);
+    }
+}
+
+ void MainWindow::saveBudget()
+ {
+     if(mBudget->save())
+         qDebug("File was written");
+ }
 
 MainWindow::~MainWindow()
 {

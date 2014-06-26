@@ -8,8 +8,7 @@
 
 class jBudget
 {
-    QFile * mBudget;
-    bool mOpened;
+    QFile * mBudgetFile;
 
     jTransactionList* mTransList;
 
@@ -20,7 +19,7 @@ public:
     ~jBudget();
 
      jTransactionList * getTransactionList();
-     bool setTransactionList(jTransactionList * list);
+     bool save();
 };
 
 #endif // JBUDGET_H

@@ -2,54 +2,51 @@
 
 jTransaction::jTransaction()
 {
-    mEntry.amount = 0;
-    mEntry.description[0] = 0;
 }
 
 jTransaction::jTransaction(QDate date, QString description, double amount)
 {
     QLocale sar(QLocale::English, QLocale::SouthAfrica);
 
-    mEntry.year = date.year();
-    mEntry.month = date.month();
-    mEntry.day = date.day();
+    mData.year = date.year();
+    mData.month = date.month();
+    mData.day = date.day();
+    mData.amount = amount;
+    strncpy((char*)mData.description, description.toLocal8Bit().data(), 64);
 
-    mEntry.amount = amount;
-    strncpy((char*)mEntry.description, description.toLocal8Bit().data(), 64);
-
-    mDate = new QTableWidgetItem(sar.toString(date, QLocale::ShortFormat));
-    mDescription = new QTableWidgetItem(description);
-    mAmount = new QTableWidgetItem(sar.toCurrencyString(amount));
+    mDateTableItem = new QTableWidgetItem(sar.toString(date, QLocale::ShortFormat));
+    mDescTableItem = new QTableWidgetItem(description);
+    mAmountTableItem = new QTableWidgetItem(sar.toCurrencyString(amount));
 }
 
-jTransaction::jTransaction(sData data) : mEntry(data)
+jTransaction::jTransaction(sData data) : mData(data)
 {
     QLocale sar(QLocale::English, QLocale::SouthAfrica);
 
-    QDate date(mEntry.year, mEntry.month, mEntry.day);
+    QDate date(mData.year, mData.month, mData.day);
 
-    mDate = new QTableWidgetItem(sar.toString(date, QLocale::ShortFormat));
-    mDescription = new QTableWidgetItem(QString((const char*)mEntry.description));
-    mAmount = new QTableWidgetItem(sar.toCurrencyString(mEntry.amount));
+    mDateTableItem = new QTableWidgetItem(sar.toString(date, QLocale::ShortFormat));
+    mDescTableItem = new QTableWidgetItem(QString((const char*)mData.description));
+    mAmountTableItem = new QTableWidgetItem(sar.toCurrencyString(mData.amount));
 }
 
 void jTransaction::debugShow()
 {
-    qDebug("%s R%f", mEntry.description, mEntry.amount);
+    qDebug("%s R%f", mData.description, mData.amount);
 }
 
 void jTransaction::setRow(QTableWidget* table, int row)
 {
-    table->setItem(row,0, mDate);
-    table->setItem(row,1, mDescription);
-    table->setItem(row,2, mAmount);
+    table->setItem(row,0, mDateTableItem);
+    table->setItem(row,1, mDescTableItem);
+    table->setItem(row,2, mAmountTableItem);
 }
 
 jTransaction::~jTransaction()
 {
-    delete mDate;
-    delete mDescription;
-    delete mAmount;
+    delete mDateTableItem;
+    delete mDescTableItem;
+    delete mAmountTableItem;
 }
 
 jTransaction::sData::sData()

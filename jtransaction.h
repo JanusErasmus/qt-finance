@@ -26,11 +26,11 @@ PACKED_STRUCT(
 )
 
 private:
-    sData mEntry;
+    sData mData;
 
-    QTableWidgetItem * mDate;
-    QTableWidgetItem * mDescription;
-    QTableWidgetItem * mAmount;
+    QTableWidgetItem * mDateTableItem;
+    QTableWidgetItem * mDescTableItem;
+    QTableWidgetItem * mAmountTableItem;
 
 public:
     jTransaction();
@@ -39,7 +39,7 @@ public:
     ~jTransaction();
 
 
-    sData * getData(){ return &mEntry; }
+    sData * getData(){ return &mData; }
     void debugShow();
 
     void setRow(QTableWidget* table, int row);

@@ -23,4 +23,5 @@ HEADERS  += mainwindow.h \
     jbudget.h \
     jtransaction.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    addTransaction.ui
