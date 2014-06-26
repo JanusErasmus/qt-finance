@@ -14,11 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    jtransaction.cpp \
-    jtransactionlist.cpp
+    jtransactionlist.cpp \
+    jbudget.cpp \
+    jtransaction.cpp
 
 HEADERS  += mainwindow.h \
-    jtransaction.h \
-    jtransactionlist.h
+    jtransactionlist.h \
+    jbudget.h \
+    jtransaction.h
 
 FORMS    += mainwindow.ui

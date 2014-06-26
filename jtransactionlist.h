@@ -11,7 +11,11 @@ class jTransactionList
 
 public:
     jTransactionList();
+    ~jTransactionList();
+
     void append(jTransaction* entry);
+    int size();
+    jTransaction * at(int idx);
 
     void fillTable(QTableWidget* table);
 };
