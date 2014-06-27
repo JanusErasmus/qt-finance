@@ -76,10 +76,10 @@ void MainWindow::fillCombo(QComboBox * sub, jCategory * cat)
     if(!sub)
         return;
 
-    QString catStrings;
-    foreach(catStrings, cat->getCategories())
+    jCategory::sCategory subCat;
+    foreach(subCat, cat->getCategories())
     {
-        sub->addItem(catStrings);
+        sub->addItem(subCat.name);
     }
 }
 

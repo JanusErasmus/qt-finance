@@ -1,11 +1,23 @@
+#include <QDebug>
 
 #include "jbudget.h"
 
 jBudget::jBudget(QString fileName)
 {
     mBudgetFile = new QFile(fileName);
-
     mTransList = new jTransactionList();
+
+//    jCategory * c = new jCategory("Sakgeld", 1);
+//    c->addSubCategory("Koeldrank", 11);
+//    c->addSubCategory("Snoepie", 12);
+//    c->addSubCategory("Bier", 13);
+//    mCategories.append(c);
+
+//    c = new jCategory("Spaar", 2);
+//    c->addSubCategory("TV", 21);
+//    c->addSubCategory("Kar", 22);
+//    mCategories.append(c);
+
 
     if(mBudgetFile->exists())
     {
@@ -106,8 +118,6 @@ void jBudget::readTransactions()
 
 void jBudget::writeCategories()
 {
-    char string[32];
-
     jCategory * t;
     foreach(t, mCategories)
     {
@@ -116,15 +126,19 @@ void jBudget::writeCategories()
         //qDebug("%d Categories", length);
         mBudgetFile->write((const char*)&length, 4);
 
-        //The next 32 bytes is the category heading
-        t->fillHeading(string, 32);
-        mBudgetFile->write((const char*)string, 32);
+        //The next 32 bytes is the category heading        
+        mBudgetFile->write((const char*)(t->getHeading().toLocal8Bit().data()), 32);
+
+        //The next 4 bytes is the amount of this category
+        float amount = t->getAmount();
+        mBudgetFile->write((const char*)&amount, 4);
 
         //The following 32 byte packets is the categories
         for(quint32 k = 0; k < length; k++)
         {
-            t->fillCategory(k, string, 32);
-            mBudgetFile->write((const char*)string, 32);
+            jCategory::sData data;
+             if(t->getCategory(k, data))
+                 mBudgetFile->write((const char*)&data, sizeof(jCategory::sData));
         }
     }
 }
@@ -143,13 +157,19 @@ void jBudget::readCategories()
          mBudgetFile->read(string, 32);
          //qDebug("Heading %s", string);
 
-         jCategory * t = new jCategory(string);
+         float amount = 0;
+         mBudgetFile->read((char*)&amount, 4);
+         //qDebug() << amount;
+
+         jCategory * t = new jCategory(string, amount);
 
          for(quint32 k = 0; k < length; k++)
          {
-             mBudgetFile->read(string, 32);
-             //qDebug(" - %s", string);
-             t->addSubCategory(string);
+             jCategory::sData data;
+             mBudgetFile->read((char*)&data, sizeof(jCategory::sData));
+             //qDebug(" - %s %f", data.category, data.amount);
+
+             t->addSubCategory(QString((char*)data.category), data.amount);
          }
 
          mCategories.append(t);
@@ -160,3 +180,4 @@ jBudget::~jBudget()
 {
     delete mTransList;
 }
+

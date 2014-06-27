@@ -70,5 +70,6 @@ jTransaction::sData::sData()
     month = 0;
     day = 0;
     memset(description, 0, 64);
+    memset(category, 0, 32);
     amount = 0;
 }

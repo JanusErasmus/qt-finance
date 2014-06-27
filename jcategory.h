@@ -5,22 +5,53 @@
 
 class jCategory
 {
+public:
+#ifdef _MSC_VER
+#pragma pack(push,1)
+        struct sData
+        {
+            unsigned char category[32];
+            float amount;
+            sData();
+        };
+#pragma pack(pop)
+#elif defined(__GNUC__)
+    struct sData
+    {
+        unsigned char category[32];
+        float amount;
+
+        sData();
+    }__attribute__((packed));
+#endif
+
+    struct sCategory
+    {
+        QString name;
+        float amount;
+    };
+
+private:
+
     QString mHeading;
-    QList<QString> mCategories;
+    float mAmount;
+    QList<sCategory> mCategories;
 
 public:
     jCategory();
-    jCategory(QString heading);
+    jCategory(QString heading, float amount);
 
-    void addSubCategory(QString subCat);
+    QString getHeading(){ return mHeading; }
+    float getAmount(){ return mAmount; }
+
+    void addSubCategory(QString name, float amount);//sCategory subCat);
+
 
     int size(){ return mCategories.size(); }
-    QString getHeading(){ return mHeading; }
 
-    QList<QString> getCategories(){ return mCategories; }
+    QList<sCategory> getCategories(){ return mCategories; }
 
-    bool fillHeading(char * ptr, int len);
-    bool fillCategory(int idx, char * ptr, int len);
+     bool getCategory(int idx, sData &data);
 };
 
 #endif // JCATEGORY_H
