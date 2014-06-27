@@ -17,6 +17,10 @@ public:
     int size();
     jTransaction * at(int idx);
 
+    float sumTransactions();
+    float sumTransactions(QString category);
+    float sumTransactions(QString category, QString subCategory);
+
     void fillTable(QTableWidget* table);
 };
 

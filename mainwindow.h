@@ -29,7 +29,7 @@ public:
     ~MainWindow();
 
 public slots:
-    void addTransaction();
+    void editCategories();
     void openBudget();
     void saveBudget();
 

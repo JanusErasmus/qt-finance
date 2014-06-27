@@ -46,6 +46,9 @@ public:
     jTransaction(QDate date, QString category, QString description, double amount);
     ~jTransaction();
 
+    QString getCategory(){ return mCategory; }
+    QString getDescription(){ return mDescription; }
+    float getAmount() { return mAmount; }
 
     sData getData();
     void debugShow(sData data);

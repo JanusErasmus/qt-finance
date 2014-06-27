@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="tabsClosable">
        <bool>false</bool>
@@ -27,6 +27,19 @@
        <attribute name="title">
         <string>Summary</string>
        </attribute>
+       <widget class="QPushButton" name="editButton">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>340</y>
+          <width>622</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Edit Categories</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="transactionTab">
        <property name="contextMenuPolicy">
@@ -88,13 +101,6 @@
            </column>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="addButton">
-           <property name="text">
-            <string>Add</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </widget>
@@ -144,22 +150,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>addButton</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>addTransaction()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>199</x>
-     <y>255</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>action_Save</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -188,6 +178,22 @@
     <hint type="destinationlabel">
      <x>199</x>
      <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editCategories()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>321</x>
+     <y>415</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>238</y>
     </hint>
    </hints>
   </connection>

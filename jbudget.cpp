@@ -7,22 +7,42 @@ jBudget::jBudget(QString fileName)
     mBudgetFile = new QFile(fileName);
     mTransList = new jTransactionList();
 
-//    jCategory * c = new jCategory("Sakgeld", 1);
-//    c->addSubCategory("Koeldrank", 11);
-//    c->addSubCategory("Snoepie", 12);
-//    c->addSubCategory("Bier", 13);
+//    jCategory * c = new jCategory("Sakgeld", 1000);
+//    c->addSubCategory("Koeldrank", 1000);
+//    c->addSubCategory("Snoepie", 1000);
+//    c->addSubCategory("Bier", 1000);
 //    mCategories.append(c);
 
 //    c = new jCategory("Spaar", 2);
-//    c->addSubCategory("TV", 21);
-//    c->addSubCategory("Kar", 22);
+//    c->addSubCategory("TV", 1000);
+//    c->addSubCategory("Kar", 1000);
 //    mCategories.append(c);
 
+//    c = new jCategory("Bonus", 1000);
+//    mCategories.append(c);
 
     if(mBudgetFile->exists())
     {
         qDebug("File exists");
         readBudget();
+    }
+
+    qDebug() << "Total " << mTransList->sumTransactions();
+    jCategory * c;
+    foreach(c, mCategories)
+    {
+        float total = c->getAmount();
+        float sum = mTransList->sumTransactions(c->getHeading());
+        qDebug() << c->getHeading() << "[" << total <<"]"  << sum << " = " << total - sum;
+
+       QList<jCategory::sCategory> clst = c->getCategories();
+       jCategory::sCategory sc;
+       foreach(sc, clst)
+       {
+           total = sc.amount;
+           sum = mTransList->sumTransactions(c->getHeading(), sc.name);
+           qDebug() << " - " << sc.name << "[" << total <<"]"  << sum << " = " << total - sum;
+       }
     }
 }
 

@@ -6,7 +6,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "ui_addTransaction.h"
+#include "ui_editCategories.h"
 #include "jtransactionlist.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -112,16 +112,16 @@ void MainWindow::tableTransChange(int row, int col)
     int lastRow = ui->transactionTable->rowCount() - 1;
     if(row == lastRow && col == 3)
     {
-        qDebug("Add transaction");
+        //qDebug("Add transaction");
 
         QTableWidgetItem* theItem = ui->transactionTable->item(row, 0);
 
-        QDate date = QDate::fromString(theItem->text());
-        qDebug() << theItem->text();
+        QDate date = QDate::fromString(theItem->text(), "yyyy-MM-dd");
+        //qDebug() << theItem->text() << date;
 
         QComboBox * box = (QComboBox *)ui->transactionTable->cellWidget(row, 1);
         QString category = box->currentText();
-        qDebug() << category;
+        //qDebug() << category;
 
         QString description;
         box = (QComboBox *)ui->transactionTable->cellWidget(row, 2);
@@ -136,11 +136,11 @@ void MainWindow::tableTransChange(int row, int col)
         }
 
 
-        qDebug() << description;
+        //qDebug() << description;
 
         theItem = ui->transactionTable->item(row, 3);
         double amount = theItem->text().toFloat();
-        qDebug() << amount;
+        //qDebug() << amount;
 
 
 
@@ -161,11 +161,11 @@ void MainWindow::tableTransChange(int row, int col)
     }
 }
 
-void MainWindow::addTransaction()
+void MainWindow::editCategories()
 {
     QDialog addDialog(0,0);
 
-    Ui_addTransaction addUi;
+    Ui_editCategories addUi;
     addUi.setupUi(&addDialog);
 
     //setup default values of add transaction window
@@ -173,14 +173,7 @@ void MainWindow::addTransaction()
     //read transaction values if OK
     if(addDialog.exec() == QDialog::Accepted)
     {
-        jTransactionList * lst = mBudget->getTransactionList();
-        jTransaction * entry = new jTransaction(QDate::currentDate(), addUi.categoryEdit->text(), addUi.descEdit->text(), addUi.amountEdit->text().toFloat());
-        lst->append(entry);
 
-        int row = ui->transactionTable->rowCount();
-        ui->transactionTable->insertRow(row);
-        entry->setRow(ui->transactionTable, row);
-        ui->transactionTable->scrollToBottom();
     }
 }
 

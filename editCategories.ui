@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>addTransaction</class>
- <widget class="QDialog" name="addTransaction">
+ <class>editCategories</class>
+ <widget class="QDialog" name="editCategories">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -110,7 +110,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>addTransaction</receiver>
+   <receiver>editCategories</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -126,7 +126,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>addTransaction</receiver>
+   <receiver>editCategories</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

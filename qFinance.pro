@@ -26,4 +26,4 @@ HEADERS  += mainwindow.h \
     jcategory.h
 
 FORMS    += mainwindow.ui \
-    addTransaction.ui
+    editCategories.ui
