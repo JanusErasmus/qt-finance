@@ -185,7 +185,7 @@
    <sender>editButton</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>editCategories()</slot>
+   <slot>editCategoryWindow()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>321</x>

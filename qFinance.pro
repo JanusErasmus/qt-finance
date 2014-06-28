@@ -17,13 +17,15 @@ SOURCES += main.cpp\
     jtransactionlist.cpp \
     jbudget.cpp \
     jtransaction.cpp \
-    jcategory.cpp
+    jcategory.cpp \
+    editcategories.cpp
 
 HEADERS  += mainwindow.h \
     jtransactionlist.h \
     jbudget.h \
     jtransaction.h \
-    jcategory.h
+    jcategory.h \
+    editcategories.h
 
 FORMS    += mainwindow.ui \
-    editCategories.ui
+    editcategories.ui
