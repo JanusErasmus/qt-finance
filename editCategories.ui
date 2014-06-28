@@ -37,70 +37,13 @@
     <rect>
      <x>10</x>
      <y>20</y>
-     <width>351</width>
+     <width>381</width>
      <height>211</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="categoryLayout">
-      <item>
-       <widget class="QLabel" name="categoryLabel">
-        <property name="minimumSize">
-         <size>
-          <width>150</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Category</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="categoryEdit"/>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="descriptionLayout">
-      <item>
-       <widget class="QLabel" name="descLabel">
-        <property name="minimumSize">
-         <size>
-          <width>150</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Description</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="descEdit"/>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="amountLayout">
-      <item>
-       <widget class="QLabel" name="amountLabel">
-        <property name="minimumSize">
-         <size>
-          <width>150</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Amount</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="amountEdit"/>
-      </item>
-     </layout>
+     <widget class="QTreeView" name="categoryTree"/>
     </item>
    </layout>
   </widget>

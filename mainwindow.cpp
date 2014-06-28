@@ -1,6 +1,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QDateEdit>
+#include <QStandardItemModel>
 
 
 #include "mainwindow.h"
@@ -169,6 +170,35 @@ void MainWindow::editCategories()
     addUi.setupUi(&addDialog);
 
     //setup default values of add transaction window
+    QList<jCategory*> cats = mBudget->getCategories();
+
+    QStandardItemModel model( cats.size(), 1 );
+    jCategory * cat;
+    int r = 0;
+    foreach(cat, cats)
+    {
+        QStandardItem *item = new QStandardItem( QString(cat->getHeading()).arg(r).arg(0) );
+
+        QList<jCategory::sCategory> subCats = cat->getCategories();
+        jCategory::sCategory subCat;
+        int i = 0;
+        foreach(subCat, subCats)
+        {
+            QStandardItem *child = new QStandardItem( QString(subCat.name).arg(i) );
+            child->setEditable( false );
+            item->appendRow( child );
+
+            i++;
+        }
+
+        model.setItem(r, 0, item);
+
+        r++;
+    }
+
+    model.setHorizontalHeaderItem( 0, new QStandardItem( "Categroies" ) );
+
+    addUi.categoryTree->setModel( &model );
 
     //read transaction values if OK
     if(addDialog.exec() == QDialog::Accepted)
