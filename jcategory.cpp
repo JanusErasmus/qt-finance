@@ -16,6 +16,24 @@ void jCategory::addSubCategory(QString name, float amount)//sCategory subCat)
     mCategories.append(subCat);
 }
 
+float jCategory::getAmount()
+{
+    float sum = 0;
+    int size = mCategories.size();
+    if(size)
+    {
+        sCategory cat;
+        foreach(cat, mCategories)
+        {
+            sum += cat.amount;
+        }
+
+        return sum;
+    }
+
+    return mAmount;
+}
+
 bool jCategory::getCategory(int idx, jCategory::sData &data)
 {    
     if(idx >= mCategories.size())

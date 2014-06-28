@@ -12,12 +12,15 @@ class editCategories : public QDialog
 {
     Q_OBJECT
 
+    Ui::editCategories *ui;
+
+    QString getCategory(jCategory * cat);
+    QString getCategory(jCategory::sCategory cat);
+
 public:
     explicit editCategories(QList<jCategory *> cats, QWidget *parent = 0);
     ~editCategories();
 
-private:
-    Ui::editCategories *ui;
 };
 
 #endif // EDITCATEGORIES_H

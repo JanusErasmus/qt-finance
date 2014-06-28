@@ -42,7 +42,7 @@ public:
     jCategory(QString heading, float amount);
 
     QString getHeading(){ return mHeading; }
-    float getAmount(){ return mAmount; }
+    float getAmount();
 
     void addSubCategory(QString name, float amount);//sCategory subCat);
 
