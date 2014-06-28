@@ -35,21 +35,23 @@ private:
 
     QString mHeading;
     float mAmount;
-    QList<sCategory> mCategories;
+    QList<sCategory*> mCategories;
 
 public:
     jCategory();
     jCategory(QString heading, float amount);
 
     QString getHeading(){ return mHeading; }
+    void setHeading(QString heading){ mHeading = heading; }
     float getAmount();
+    void setAmount(float amount){ mAmount = amount; }
 
     void addSubCategory(QString name, float amount);//sCategory subCat);
 
 
     int size(){ return mCategories.size(); }
 
-    QList<sCategory> getCategories(){ return mCategories; }
+    QList<sCategory*> getCategories(){ return mCategories; }
 
      bool getCategory(int idx, sData &data);
 };

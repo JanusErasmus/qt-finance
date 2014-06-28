@@ -10,9 +10,9 @@ jCategory::jCategory(QString heading, float amount) : mHeading(heading), mAmount
 
 void jCategory::addSubCategory(QString name, float amount)//sCategory subCat)
 {
-    sCategory subCat;
-    subCat.name = name;
-    subCat.amount = amount;
+    sCategory * subCat = new sCategory();
+    subCat->name = name;
+    subCat->amount = amount;
     mCategories.append(subCat);
 }
 
@@ -22,10 +22,10 @@ float jCategory::getAmount()
     int size = mCategories.size();
     if(size)
     {
-        sCategory cat;
+        sCategory * cat;
         foreach(cat, mCategories)
         {
-            sum += cat.amount;
+            sum += cat->amount;
         }
 
         return sum;
@@ -39,8 +39,8 @@ bool jCategory::getCategory(int idx, jCategory::sData &data)
     if(idx >= mCategories.size())
         return false;
 
-    data.amount = mCategories.at(idx).amount;
-    strncpy((char*)data.category, mCategories.at(idx).name.toLocal8Bit().data(), 32);
+    data.amount = mCategories.at(idx)->amount;
+    strncpy((char*)data.category, mCategories.at(idx)->name.toLocal8Bit().data(), 32);
 
     return true;
 }
