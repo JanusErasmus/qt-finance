@@ -17,7 +17,7 @@ class editCategories : public QDialog
     Ui::editCategories *ui;
 
     jBudget * mBudget;
-    QList<jCategory*> mCategories;
+   // QList<jCategory*> mCategories;
 
     void fillTree();    
     QList<QStandardItem*> fillCategory(jCategory::sCategory * cat);

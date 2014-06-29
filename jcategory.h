@@ -46,7 +46,7 @@ public:
     float getAmount();
     void setAmount(float amount){ mAmount = amount; }
 
-    void addSubCategory(QString name, float amount);//sCategory subCat);
+    void addSubCategory(QString name, float amount);
 
 
     int size(){ return mCategories.size(); }

@@ -6,12 +6,13 @@
 
 editCategories::editCategories(jBudget * budget, QWidget *parent) : QDialog(parent),
                                                                           ui(new Ui::editCategories),
-                                                                          mBudget(budget),
-                                                                          mCategories(budget->getCategories())
+                                                                          mBudget(budget)
+
 
 {
     ui->setupUi(this);
     setWindowTitle("Edit Categories");
+   // mCategories = budget->getCategories();
 
     ui->incomeEdit->setText(QString::number(mBudget->getIncome()));
     fillTree();
@@ -23,10 +24,10 @@ void editCategories::fillTree()
     ui->categoryTree->reset();
 
     //setup default values of add transaction window
-    QStandardItemModel * model = new QStandardItemModel( mCategories.size(), 2 );
+    QStandardItemModel * model = new QStandardItemModel( mBudget->getCategories().size(), 2 );
     jCategory * cat;
     int r = 0;
-    foreach(cat, mCategories)
+    foreach(cat, mBudget->getCategories())
     {
         QStandardItem * item = new QStandardItem(cat->getHeading());
         model->setItem(r, 0, item);
@@ -36,6 +37,7 @@ void editCategories::fillTree()
             QLocale sar(QLocale::English, QLocale::SouthAfrica);
             QString amountStr = sar.toCurrencyString(cat->getAmount());
             QStandardItem * amount = new QStandardItem(amountStr);
+            amount->setSelectable(false);
             model->setItem(r, 1, amount);
 
             sum += cat->getAmount();
@@ -53,11 +55,13 @@ void editCategories::fillTree()
 
             i++;
         }
-
-
+        QStandardItem *newItem = new QStandardItem( "*" );
+        item->appendRow( newItem );
 
         r++;
     }
+    QStandardItem * newItem = new QStandardItem("*");
+    model->setItem(r, 0, newItem);
 
     model->setHorizontalHeaderItem( 0, new QStandardItem( "Categories" ) );
     model->setHorizontalHeaderItem( 1, new QStandardItem( "Amount" ) );
@@ -88,6 +92,7 @@ QList<QStandardItem*> editCategories::fillCategory(jCategory::sCategory * cat)
      lst.append(name);
      QStandardItem *amount = new QStandardItem( amountStr );
      amount->setEditable( false );
+     amount->setSelectable(false);
      lst.append(amount);
 
      return lst;
@@ -95,11 +100,32 @@ QList<QStandardItem*> editCategories::fillCategory(jCategory::sCategory * cat)
 
 void editCategories::selectCategory(QModelIndex idx)
 {
+    if(idx.column() == 1)
+      {
+        ui->nameEdit->setText("");
+        ui->nameEdit->setEnabled(0);
+        ui->amountEdit->setText("");
+        ui->amountEdit->setEnabled(0);
+        ui->applyButton->setEnabled(0);
+        return;
+    }
+
     QModelIndex p = idx.parent();
     if(p.isValid())
     {
+        jCategory * cat = mBudget->getCategories().at(p.row());
+
+        if(idx.row() >= cat->getCategories().size())
+        {
+            ui->nameEdit->setEnabled(1);
+            ui->amountEdit->setEnabled(1);
+            ui->nameEdit->setText("");
+            ui->amountEdit->setText("");
+            ui->applyButton->setEnabled(1);
+            return;
+        }
         //qDebug() << "Selected: cat"<< p.row() << "subCat" << idx.row();
-        jCategory * cat = mCategories.at(p.row());
+
         jCategory::sCategory * subCat = cat->getCategories().at(idx.row());
         //qDebug() << cat->getHeading() << subCat.name;
 
@@ -111,8 +137,18 @@ void editCategories::selectCategory(QModelIndex idx)
     }
     else
     {
+        if(idx.row() >= mBudget->getCategories().size())
+        {
+            ui->nameEdit->setEnabled(1);
+            ui->amountEdit->setEnabled(1);
+            ui->nameEdit->setText("");
+            ui->amountEdit->setText("");
+            ui->applyButton->setEnabled(1);
+            return;
+        }
+
         //qDebug() << "Selected: cat" << idx.row();
-        jCategory * cat = mCategories.at(idx.row());
+        jCategory * cat = mBudget->getCategories().at(idx.row());
         if(!cat->size())
         {
             //qDebug() << cat->getHeading();
@@ -134,21 +170,24 @@ void editCategories::selectCategory(QModelIndex idx)
 }
 
 void editCategories::applyEdit()
-{
-    //qDebug() << "Name change: " << name;
-    QStandardItemModel * model  = (QStandardItemModel*)ui->categoryTree->model();
+{    
+    qDebug("Apply");
+    bool updateFlag = false;
+    QStandardItemModel * model  = (QStandardItemModel*)ui->categoryTree->model();    
     QStandardItem * child = model->itemFromIndex(ui->categoryTree->currentIndex());
     QStandardItem * parent = child->parent();
 
+    QString catName;
+    QString subName;
+
     if(parent)
     {
-        //qDebug() << parent->text() << child->text();
-        QString catName = parent->text().split(" ").at(0);
-        QString subName = child->text().split(" ").at(0);
-        qDebug() << catName << subName;
+        catName = parent->text();
+        subName = child->text();
+        qDebug() << "cat:" << catName << "subcat: " << subName;
 
         jCategory * cat;
-        foreach(cat, mCategories)
+        foreach(cat, mBudget->getCategories())
         {
             if(cat->getHeading() == catName)
             {
@@ -159,6 +198,7 @@ void editCategories::applyEdit()
                     {
                         sub->name = ui->nameEdit->text();
                         sub->amount = ui->amountEdit->text().toFloat();
+                        updateFlag = true;
                     }
                 }
             }
@@ -166,27 +206,50 @@ void editCategories::applyEdit()
     }
     else
     {
-        QString catName = child->text().split(" ").at(0);
-
+        catName = child->text();
+        qDebug() << "cat:" << catName;
 
         jCategory * cat;
-        foreach(cat, mCategories)
+        foreach(cat, mBudget->getCategories())
         {
             if(cat->getHeading() == catName)
             {
                 cat->setHeading( ui->nameEdit->text());
                 cat->setAmount(ui->amountEdit->text().toFloat());
+                updateFlag = true;
             }
         }
     }
+
+    if(!updateFlag)
+    {
+        if(subName.isEmpty())
+         {
+            qDebug()  << "Add " << ui->nameEdit->text() << ui->amountEdit->text();
+            mBudget->addCategory(ui->nameEdit->text(),  ui->amountEdit->text().toFloat());
+        }
+        else
+        {
+            qDebug()  << "Append to " << catName  << ui->nameEdit->text() << ui->amountEdit->text();
+            jCategory * cat;
+            foreach(cat, mBudget->getCategories())
+            {
+                if(cat->getHeading() == catName)
+                {
+                    cat->addSubCategory(ui->nameEdit->text(), ui->amountEdit->text().toFloat());
+                }
+            }
+        }
+
+    }
+
+    ui->nameEdit->setText("");
+    ui->nameEdit->setEnabled(0);
+    ui->amountEdit->setText("");
+    ui->amountEdit->setEnabled(0);
+     ui->applyButton->setEnabled(0);
+
     fillTree();
-
-    //    QLocale sar(QLocale::English, QLocale::SouthAfrica);
-
-    //    float amount = ui->amountEdit->text().toFloat();
-    //    qDebug() << amount;
-    //   QString text = ui->nameEdit->text() + " [" + sar.toCurrencyString(amount) +"]";
-    //    child->setText(text);
 }
 
 editCategories::~editCategories()

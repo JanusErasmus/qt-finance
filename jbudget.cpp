@@ -76,6 +76,12 @@ jTransactionList * jBudget::getTransactionList()
     return mTransList;
 }
 
+void jBudget::addCategory(QString heading, float amount)
+{
+    jCategory * cat = new jCategory(heading, amount);
+    mCategories.append(cat);
+}
+
 jCategory* jBudget::getCategory(QString heading)
 {
     jCategory * cat;

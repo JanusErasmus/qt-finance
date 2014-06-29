@@ -29,11 +29,16 @@ public:
 
     float getIncome(){ return mIncome; }
     void setIncome(float income){ mIncome = income; }
-     jTransactionList * getTransactionList();
-     QList<jCategory*> getCategories(){ return mCategories; }
-     jCategory* getCategory(QString heading);
+    jTransactionList * getTransactionList();
 
-     bool save();
+    void addCategory(QString heading, float amount);
+    jCategory* getCategory(QString heading);
+
+    QList<jCategory*> getCategories(){ return mCategories; }
+
+
+
+    bool save();
 };
 
 #endif // JBUDGET_H
