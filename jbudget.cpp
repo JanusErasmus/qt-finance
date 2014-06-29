@@ -4,6 +4,7 @@
 
 jBudget::jBudget(QString fileName)
 {
+    mIncome = 0;
     mBudgetFile = new QFile(fileName);
     mTransList = new jTransactionList();
 
@@ -58,8 +59,13 @@ void jBudget::readBudget()
     mBudgetFile->read((char*)&version, 4);
     qDebug("Budget File version 0x%08X", version);
 
+    //the next 4 bytes is income
+    mBudgetFile->read((char*)&mIncome, 4);
+    qDebug("Income %f", mIncome);
+
     readTransactions();
     readCategories();
+
 
 
     mBudgetFile->close();
@@ -93,6 +99,9 @@ bool jBudget::save()
     //first 4 bytes is the version (qint32)
     qint32 version = VERSION;
     mBudgetFile->write((const char*)&version, 4);
+
+    //next 4 bytes is the income
+    mBudgetFile->write((const char*)&mIncome, 4);
 
     //next 4 bytes lenght of the list
     quint32 length = mTransList->size();

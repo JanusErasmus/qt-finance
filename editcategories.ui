@@ -42,27 +42,21 @@
     <item>
      <widget class="QTreeView" name="categoryTree"/>
     </item>
+    <item>
+     <layout class="QHBoxLayout" name="incomeLayout">
+      <item>
+       <widget class="QLabel" name="incomeLabel">
+        <property name="text">
+         <string>Income</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="incomeEdit"/>
+      </item>
+     </layout>
+    </item>
    </layout>
-  </widget>
-  <widget class="QLabel" name="headingLabel">
-   <property name="geometry">
-    <rect>
-     <x>240</x>
-     <y>20</y>
-     <width>131</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Selected Category</string>
-   </property>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget_2">
    <property name="geometry">
@@ -90,7 +84,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="nameEdit"/>
+       <widget class="QLineEdit" name="nameEdit">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -110,13 +108,20 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="amountEdit"/>
+       <widget class="QLineEdit" name="amountEdit">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
    </layout>
   </widget>
   <widget class="QPushButton" name="applyButton">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>310</x>
@@ -128,6 +133,39 @@
    <property name="text">
     <string>Apply</string>
    </property>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>180</y>
+     <width>160</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="deifferenceLabel">
+      <property name="text">
+       <string>Difference</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="differenceValue">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>R 0</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

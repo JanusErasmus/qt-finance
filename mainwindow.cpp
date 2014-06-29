@@ -89,7 +89,7 @@ void MainWindow::fillCombo(QComboBox * sub, jCategory * cat)
 void MainWindow::updateSubCombo(QString currSelection)
 {
     int row = ui->transactionTable->rowCount() - 1;
-    qDebug() << currSelection;
+    //qDebug() << currSelection;
 
 
     jCategory * cat = mBudget->getCategory(currSelection);
@@ -110,7 +110,7 @@ void MainWindow::updateSubCombo(QString currSelection)
 
 void MainWindow::tableTransChange(int row, int col)
 {
-    qDebug() << "Changed:" << row << col;
+    //qDebug() << "Changed:" << row << col;
 
     int lastRow = ui->transactionTable->rowCount() - 1;
     if(row == lastRow && col == 3)
@@ -166,7 +166,7 @@ void MainWindow::tableTransChange(int row, int col)
 
 void MainWindow::editCategoryWindow()
 {
-    editCategories catUi(mBudget->getCategories(), this);
+    editCategories catUi(mBudget, this);
 
     //read transaction values if OK
     if(catUi.exec() == QDialog::Accepted)

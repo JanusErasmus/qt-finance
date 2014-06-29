@@ -2,8 +2,9 @@
 #define EDITCATEGORIES_H
 #include <QDialog>
 #include <QModelIndex>
+#include <QStandardItemModel>
 
-#include "jcategory.h"
+#include "jBudget.h"
 
 namespace Ui {
 class editCategories;
@@ -15,14 +16,14 @@ class editCategories : public QDialog
 
     Ui::editCategories *ui;
 
+    jBudget * mBudget;
     QList<jCategory*> mCategories;
 
-    void fillTree();
-    QString getCategory(jCategory * cat);
-    QString getCategory(jCategory::sCategory * cat);
+    void fillTree();    
+    QList<QStandardItem*> fillCategory(jCategory::sCategory * cat);
 
 public:
-    explicit editCategories(QList<jCategory *> cats, QWidget *parent = 0);
+    explicit editCategories(jBudget *budget, QWidget *parent = 0);
     ~editCategories();
 
 public slots:

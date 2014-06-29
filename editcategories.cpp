@@ -1,77 +1,96 @@
-#include <QStandardItemModel>
 #include <QDebug>
 
 #include "editcategories.h"
 #include "ui_editcategories.h"
 
 
-editCategories::editCategories(QList<jCategory*> cats, QWidget *parent) : QDialog(parent),
+editCategories::editCategories(jBudget * budget, QWidget *parent) : QDialog(parent),
                                                                           ui(new Ui::editCategories),
-                                                                          mCategories(cats)
+                                                                          mBudget(budget),
+                                                                          mCategories(budget->getCategories())
+
 {
     ui->setupUi(this);
     setWindowTitle("Edit Categories");
 
+    ui->incomeEdit->setText(QString::number(mBudget->getIncome()));
     fillTree();
 }
 
 void editCategories::fillTree()
 {
+    float sum = 0;
     ui->categoryTree->reset();
 
     //setup default values of add transaction window
-    QStandardItemModel * model = new QStandardItemModel( mCategories.size(), 1 );
+    QStandardItemModel * model = new QStandardItemModel( mCategories.size(), 2 );
     jCategory * cat;
     int r = 0;
     foreach(cat, mCategories)
     {
-        QString catName = cat->getHeading();
+        QStandardItem * item = new QStandardItem(cat->getHeading());
+        model->setItem(r, 0, item);
 
         if(!cat->getCategories().size())
-            catName = getCategory(cat);
+        {
+            QLocale sar(QLocale::English, QLocale::SouthAfrica);
+            QString amountStr = sar.toCurrencyString(cat->getAmount());
+            QStandardItem * amount = new QStandardItem(amountStr);
+            model->setItem(r, 1, amount);
 
-        QStandardItem * item = new QStandardItem(catName);
+            sum += cat->getAmount();
+        }
 
         QList<jCategory::sCategory*> subCats = cat->getCategories();
         jCategory::sCategory * subCat;
         int i = 0;
         foreach(subCat, subCats)
         {
-            QStandardItem *child = new QStandardItem( getCategory(subCat));
-            child->setEditable( false );
-            item->appendRow( child );
+            QList<QStandardItem*> lst = fillCategory(subCat);
+            item->appendRow( lst );
+
+            sum += subCat->amount;
 
             i++;
         }
 
-        model->setItem(r, 0, item);
+
 
         r++;
     }
 
-    model->setHorizontalHeaderItem( 0, new QStandardItem( "Categroies" ) );
+    model->setHorizontalHeaderItem( 0, new QStandardItem( "Categories" ) );
+    model->setHorizontalHeaderItem( 1, new QStandardItem( "Amount" ) );
 
     ui->categoryTree->setModel( model );
     ui->categoryTree->expandAll();
-}
 
-QString editCategories::getCategory(jCategory * cat)
-{
     QLocale sar(QLocale::English, QLocale::SouthAfrica);
-    //QList<jCategory::sCategory> subCats = cat->getCategories();
 
-    QString name = QString(cat->getHeading()).leftJustified(10, ' ');
-    return name + "[" + sar.toCurrencyString(cat->getAmount()) +"]";
+    float income = ui->incomeEdit->text().toFloat();
+    mBudget->setIncome(income);
+    float diff = income - sum;
+
+    ui->differenceValue->setText(sar.toCurrencyString(diff));
+
 }
 
-
-QString editCategories::getCategory(jCategory::sCategory * cat)
+QList<QStandardItem*> editCategories::fillCategory(jCategory::sCategory * cat)
 {
+    QList<QStandardItem*> lst;
      QLocale sar(QLocale::English, QLocale::SouthAfrica);
 
-     QString name = QString(cat->name).leftJustified(10, ' ');
+     QString nameStr = QString(cat->name);
+     QString amountStr = sar.toCurrencyString(cat->amount);
 
-     return name + " [" + sar.toCurrencyString(cat->amount) +"]";
+     QStandardItem *name = new QStandardItem( nameStr );
+     name->setEditable( false );
+     lst.append(name);
+     QStandardItem *amount = new QStandardItem( amountStr );
+     amount->setEditable( false );
+     lst.append(amount);
+
+     return lst;
 }
 
 void editCategories::selectCategory(QModelIndex idx)
@@ -88,6 +107,7 @@ void editCategories::selectCategory(QModelIndex idx)
         ui->amountEdit->setEnabled(1);
         ui->nameEdit->setText(subCat->name);
         ui->amountEdit->setText(QString::number(subCat->amount));
+        ui->applyButton->setEnabled(1);
     }
     else
     {
@@ -100,6 +120,7 @@ void editCategories::selectCategory(QModelIndex idx)
             ui->amountEdit->setEnabled(1);
             ui->nameEdit->setText(cat->getHeading());
             ui->amountEdit->setText(QString::number(cat->getAmount()));
+            ui->applyButton->setEnabled(1);
         }
         else
         {
@@ -107,6 +128,7 @@ void editCategories::selectCategory(QModelIndex idx)
             ui->nameEdit->setEnabled(0);
             ui->amountEdit->setText("");
             ui->amountEdit->setEnabled(0);
+            ui->applyButton->setEnabled(0);
         }
     }
 }
@@ -143,7 +165,7 @@ void editCategories::applyEdit()
         }
     }
     else
-     {
+    {
         QString catName = child->text().split(" ").at(0);
 
 
@@ -156,7 +178,7 @@ void editCategories::applyEdit()
                 cat->setAmount(ui->amountEdit->text().toFloat());
             }
         }
-}
+    }
     fillTree();
 
     //    QLocale sar(QLocale::English, QLocale::SouthAfrica);
