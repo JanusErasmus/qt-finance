@@ -32,7 +32,9 @@ public:
     jTransactionList * getTransactionList();
 
     void addCategory(QString heading, float amount);
+    void removeCategory(QString heading);
     jCategory* getCategory(QString heading);
+
 
     QList<jCategory*> getCategories(){ return mCategories; }
 

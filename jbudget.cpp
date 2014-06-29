@@ -82,6 +82,18 @@ void jBudget::addCategory(QString heading, float amount)
     mCategories.append(cat);
 }
 
+void jBudget::removeCategory(QString heading)
+{
+    jCategory * cat;
+    foreach(cat, mCategories)
+    {
+        if(cat->getHeading() == heading)
+        {
+         mCategories.removeOne(cat);
+         return;
+        }
+    }
+}
 jCategory* jBudget::getCategory(QString heading)
 {
     jCategory * cat;
@@ -97,10 +109,10 @@ jCategory* jBudget::getCategory(QString heading)
 
 bool jBudget::save()
 {
-    if(!mBudgetFile->open(QIODevice::ReadWrite))
+    if(!mBudgetFile->open(QIODevice::WriteOnly))
         return false;
 
-    mBudgetFile->seek(0);
+    mBudgetFile->reset();
 
     //first 4 bytes is the version (qint32)
     qint32 version = VERSION;
@@ -154,15 +166,17 @@ void jBudget::readTransactions()
 void jBudget::writeCategories()
 {
     jCategory * t;
+    qDebug("%d Categories", mCategories.size());
     foreach(t, mCategories)
     {
         //first 4 bytes is the amount of categories
         quint32 length = t->size();
-        //qDebug("%d Categories", length);
+        //qDebug("%d subCategories", length);
         mBudgetFile->write((const char*)&length, 4);
 
         //The next 32 bytes is the category heading        
         mBudgetFile->write((const char*)(t->getHeading().toLocal8Bit().data()), 32);
+        qDebug() << t->getHeading();
 
         //The next 4 bytes is the amount of this category
         float amount = t->getAmount();

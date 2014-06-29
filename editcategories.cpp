@@ -107,6 +107,7 @@ void editCategories::selectCategory(QModelIndex idx)
         ui->amountEdit->setText("");
         ui->amountEdit->setEnabled(0);
         ui->applyButton->setEnabled(0);
+        ui->deleteButton->setEnabled(0);
         return;
     }
 
@@ -122,6 +123,8 @@ void editCategories::selectCategory(QModelIndex idx)
             ui->nameEdit->setText("");
             ui->amountEdit->setText("");
             ui->applyButton->setEnabled(1);
+            ui->applyButton->setText("Add");
+            ui->deleteButton->setEnabled(0);
             return;
         }
         //qDebug() << "Selected: cat"<< p.row() << "subCat" << idx.row();
@@ -134,6 +137,8 @@ void editCategories::selectCategory(QModelIndex idx)
         ui->nameEdit->setText(subCat->name);
         ui->amountEdit->setText(QString::number(subCat->amount));
         ui->applyButton->setEnabled(1);
+        ui->applyButton->setText("Apply");
+        ui->deleteButton->setEnabled(1);
     }
     else
     {
@@ -144,6 +149,8 @@ void editCategories::selectCategory(QModelIndex idx)
             ui->nameEdit->setText("");
             ui->amountEdit->setText("");
             ui->applyButton->setEnabled(1);
+            ui->applyButton->setText("Add");
+            ui->deleteButton->setEnabled(0);
             return;
         }
 
@@ -157,6 +164,8 @@ void editCategories::selectCategory(QModelIndex idx)
             ui->nameEdit->setText(cat->getHeading());
             ui->amountEdit->setText(QString::number(cat->getAmount()));
             ui->applyButton->setEnabled(1);
+            ui->applyButton->setText("Apply");
+            ui->deleteButton->setEnabled(1);
         }
         else
         {
@@ -165,13 +174,14 @@ void editCategories::selectCategory(QModelIndex idx)
             ui->amountEdit->setText("");
             ui->amountEdit->setEnabled(0);
             ui->applyButton->setEnabled(0);
+            ui->deleteButton->setEnabled(0);
         }
     }
 }
 
 void editCategories::applyEdit()
 {    
-    qDebug("Apply");
+    //qDebug("Apply");
     bool updateFlag = false;
     QStandardItemModel * model  = (QStandardItemModel*)ui->categoryTree->model();    
     QStandardItem * child = model->itemFromIndex(ui->categoryTree->currentIndex());
@@ -248,6 +258,41 @@ void editCategories::applyEdit()
     ui->amountEdit->setText("");
     ui->amountEdit->setEnabled(0);
      ui->applyButton->setEnabled(0);
+
+    fillTree();
+}
+
+
+void editCategories::deleteCatagory()
+{
+    qDebug() << "Delete";
+    QStandardItemModel * model  = (QStandardItemModel*)ui->categoryTree->model();
+    QStandardItem * child = model->itemFromIndex(ui->categoryTree->currentIndex());
+    QStandardItem * parent = child->parent();
+
+    QString catName;
+    QString subName;
+
+    if(parent)
+    {
+        catName = parent->text();
+        subName = child->text();
+        qDebug() << "cat:" << catName << "subcat: " << subName;
+        jCategory * cat;
+        foreach(cat, mBudget->getCategories())
+        {
+            if(cat->getHeading() == catName)
+            {
+                cat->removeSubCategory(subName);
+            }
+        }
+    }
+    else
+    {
+        catName = child->text();
+        qDebug() << "cat:" << catName;
+        mBudget->removeCategory(catName);
+    }
 
     fillTree();
 }

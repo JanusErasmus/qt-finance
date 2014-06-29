@@ -28,7 +28,8 @@ public:
 
 public slots:
     void selectCategory(QModelIndex idx);
-    void applyEdit();
+    void applyEdit();    
+    void deleteCatagory();
 };
 
 #endif // EDITCATEGORIES_H

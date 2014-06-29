@@ -16,6 +16,19 @@ void jCategory::addSubCategory(QString name, float amount)//sCategory subCat)
     mCategories.append(subCat);
 }
 
+void jCategory::removeSubCategory(QString name)
+{
+    sCategory* cat;
+    foreach(cat, mCategories)
+    {
+        if(cat->name == name)
+        {
+            mCategories.removeOne(cat);
+            return;
+        }
+    }
+}
+
 float jCategory::getAmount()
 {
     float sum = 0;

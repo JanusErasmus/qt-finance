@@ -27,19 +27,6 @@
        <attribute name="title">
         <string>Summary</string>
        </attribute>
-       <widget class="QPushButton" name="editButton">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>340</y>
-          <width>622</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Edit Categories</string>
-        </property>
-       </widget>
       </widget>
       <widget class="QWidget" name="transactionTab">
        <property name="contextMenuPolicy">
@@ -114,7 +101,7 @@
      <x>0</x>
      <y>0</y>
      <width>640</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuQBudget">
@@ -124,7 +111,14 @@
     <addaction name="action_Open"/>
     <addaction name="action_Save"/>
    </widget>
+   <widget class="QMenu" name="menuCatgegory">
+    <property name="title">
+     <string>Catgegory</string>
+    </property>
+    <addaction name="actionEdit"/>
+   </widget>
    <addaction name="menuQBudget"/>
+   <addaction name="menuCatgegory"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -143,6 +137,11 @@
   <action name="action_Open">
    <property name="text">
     <string>&amp;Open</string>
+   </property>
+  </action>
+  <action name="actionEdit">
+   <property name="text">
+    <string>Edit</string>
    </property>
   </action>
  </widget>
@@ -182,14 +181,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>editButton</sender>
-   <signal>clicked()</signal>
+   <sender>actionEdit</sender>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>editCategoryWindow()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>321</x>
-     <y>415</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>319</x>
