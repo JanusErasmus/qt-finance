@@ -39,10 +39,15 @@ void MainWindow::openBudget(QString filename)
     }
 
     mBudget = new jBudget(filename);
+
+    //fill transaction list
     jTransactionList * lst = mBudget->getTransactionList();
     lst->fillTable(ui->transactionTable);
     ui->transactionTable->scrollToBottom();
     insertNewEntryRow();
+
+    //fill summary tree
+    fillTree();
 }
 
 void MainWindow::insertNewEntryRow()
@@ -188,6 +193,75 @@ void MainWindow::openBudget()
  {
      if(mBudget->save())
          qDebug("File was written");
+ }
+
+ void MainWindow::fillTree()
+ {
+     ui->summaryTree->reset();
+
+     //setup default values of add transaction window
+     QStandardItemModel * model = new QStandardItemModel( mBudget->getCategories().size(), 2 );
+     jCategory * cat;
+     int r = 0;
+     foreach(cat, mBudget->getCategories())
+     {
+         QStandardItem * item = new QStandardItem(cat->getHeading());
+         model->setItem(r, 0, item);
+
+         if(!cat->getCategories().size())
+         {
+             QLocale sar(QLocale::English, QLocale::SouthAfrica);
+
+             float total = cat->getAmount();
+             float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading());
+
+             QString amountStr = sar.toCurrencyString(total - sum);
+             QStandardItem * amount = new QStandardItem(amountStr);
+             amount->setSelectable(false);
+             model->setItem(r, 1, amount);
+         }
+
+         QList<jCategory::sCategory*> subCats = cat->getCategories();
+         jCategory::sCategory * subCat;
+         int i = 0;
+         foreach(subCat, subCats)
+         {
+             QList<QStandardItem*> lst = fillCategory(cat, subCat);
+             item->appendRow( lst );
+
+             i++;
+         }
+
+         r++;
+     }
+
+     model->setHorizontalHeaderItem( 0, new QStandardItem( "Categories" ) );
+     model->setHorizontalHeaderItem( 1, new QStandardItem( "Amount" ) );
+
+     ui->summaryTree->setModel( model );
+     ui->summaryTree->expandAll();
+ }
+
+ QList<QStandardItem*> MainWindow::fillCategory(jCategory *cat, jCategory::sCategory * subCat)
+ {
+     QList<QStandardItem*> lst;
+      QLocale sar(QLocale::English, QLocale::SouthAfrica);
+
+      QString nameStr = QString(subCat->name);
+
+      float total = subCat->amount;
+      float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading(), subCat->name);
+      QString amountStr = sar.toCurrencyString(total - sum);
+
+      QStandardItem *name = new QStandardItem( nameStr );
+      name->setEditable( false );
+      lst.append(name);
+      QStandardItem *amount = new QStandardItem( amountStr );
+      amount->setEditable( false );
+      amount->setSelectable(false);
+      lst.append(amount);
+
+      return lst;
  }
 
 MainWindow::~MainWindow()

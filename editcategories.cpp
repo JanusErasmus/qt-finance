@@ -194,7 +194,7 @@ void editCategories::applyEdit()
     {
         catName = parent->text();
         subName = child->text();
-        qDebug() << "cat:" << catName << "subcat: " << subName;
+        //qDebug() << "cat:" << catName << "subcat: " << subName;
 
         jCategory * cat;
         foreach(cat, mBudget->getCategories())
@@ -217,7 +217,7 @@ void editCategories::applyEdit()
     else
     {
         catName = child->text();
-        qDebug() << "cat:" << catName;
+        //qDebug() << "cat:" << catName;
 
         jCategory * cat;
         foreach(cat, mBudget->getCategories())
@@ -235,12 +235,12 @@ void editCategories::applyEdit()
     {
         if(subName.isEmpty())
          {
-            qDebug()  << "Add " << ui->nameEdit->text() << ui->amountEdit->text();
+            //qDebug()  << "Add " << ui->nameEdit->text() << ui->amountEdit->text();
             mBudget->addCategory(ui->nameEdit->text(),  ui->amountEdit->text().toFloat());
         }
         else
         {
-            qDebug()  << "Append to " << catName  << ui->nameEdit->text() << ui->amountEdit->text();
+            //qDebug()  << "Append to " << catName  << ui->nameEdit->text() << ui->amountEdit->text();
             jCategory * cat;
             foreach(cat, mBudget->getCategories())
             {
@@ -265,7 +265,7 @@ void editCategories::applyEdit()
 
 void editCategories::deleteCatagory()
 {
-    qDebug() << "Delete";
+    //qDebug() << "Delete";
     QStandardItemModel * model  = (QStandardItemModel*)ui->categoryTree->model();
     QStandardItem * child = model->itemFromIndex(ui->categoryTree->currentIndex());
     QStandardItem * parent = child->parent();
@@ -277,7 +277,7 @@ void editCategories::deleteCatagory()
     {
         catName = parent->text();
         subName = child->text();
-        qDebug() << "cat:" << catName << "subcat: " << subName;
+        //qDebug() << "cat:" << catName << "subcat: " << subName;
         jCategory * cat;
         foreach(cat, mBudget->getCategories())
         {
@@ -290,7 +290,7 @@ void editCategories::deleteCatagory()
     else
     {
         catName = child->text();
-        qDebug() << "cat:" << catName;
+        //qDebug() << "cat:" << catName;
         mBudget->removeCategory(catName);
     }
 

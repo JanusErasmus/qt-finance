@@ -1,8 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
 #include <QMainWindow>
 #include <QComboBox>
+#include <QStandardItemModel>
 
 #include "jbudget.h"
 
@@ -24,6 +24,8 @@ class MainWindow : public QMainWindow
     void fillCombo(QComboBox * main);
     void fillCombo(QComboBox * sub, jCategory * cat);
 
+    QList<QStandardItem*> fillCategory(jCategory * cat, jCategory::sCategory * subCat);
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -35,6 +37,8 @@ public slots:
 
     void updateSubCombo(QString currSelection);
     void tableTransChange(int row, int col);
+
+     void fillTree();
 
 private:
     Ui::MainWindow *ui;

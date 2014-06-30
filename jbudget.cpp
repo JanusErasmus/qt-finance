@@ -27,24 +27,6 @@ jBudget::jBudget(QString fileName)
         qDebug("File exists");
         readBudget();
     }
-
-//    qDebug() << "Total " << mTransList->sumTransactions();
-//    jCategory * c;
-//    foreach(c, mCategories)
-//    {
-//        float total = c->getAmount();
-//        float sum = mTransList->sumTransactions(c->getHeading());
-//        qDebug() << c->getHeading() << "[" << total <<"]"  << sum << " = " << total - sum;
-
-//       QList<jCategory::sCategory> clst = c->getCategories();
-//       jCategory::sCategory sc;
-//       foreach(sc, clst)
-//       {
-//           total = sc.amount;
-//           sum = mTransList->sumTransactions(c->getHeading(), sc.name);
-//           qDebug() << " - " << sc.name << "[" << total <<"]"  << sum << " = " << total - sum;
-//       }
-//    }
 }
 
 void jBudget::readBudget()
