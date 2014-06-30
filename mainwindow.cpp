@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->setupUi(this);
     ui->transactionTable->setColumnWidth(0,70);
-    ui->transactionTable->setColumnWidth(2,195);
+    ui->transactionTable->setColumnWidth(2,165);
     ui->transactionTable->horizontalHeader()->setSectionResizeMode (QHeaderView::Fixed);
     ui->transactionTable->verticalHeader()->setSectionResizeMode (QHeaderView::Fixed);
 
@@ -52,9 +52,7 @@ void MainWindow::openBudget(QString filename)
     //fill transaction list
     jTransactionList * lst = mBudget->getTransactionList();
     lst->fillTable(ui->transactionTable);
-    ui->transactionTable->scrollToBottom();
     insertNewEntryRow();
-
 
     ui->bankEdit->setText(QString::number(mBudget->getBank()));
 
@@ -80,6 +78,8 @@ void MainWindow::insertNewEntryRow()
     ui->transactionTable->setCellWidget(row,1,mMainCombo);
 
     connect(ui->transactionTable, SIGNAL(cellChanged(int,int)), this, SLOT(tableTransChange(int,int)));
+
+    ui->transactionTable->scrollToBottom();
 }
 
 void MainWindow::fillCombo(QComboBox * main)
@@ -119,16 +119,11 @@ void MainWindow::fillCombo(QComboBox * sub, jCategory * cat)
 }
 
 void MainWindow::updateSubCombo(QString currSelection)
-{
-    qDebug() << mEditRow << currSelection;
-
+{    
     int row = ui->transactionTable->rowCount() - 1;
 
     if(mEditRow >= 0)
         row = mEditRow;
-
-    qDebug() << "Row" << row;
-
 
     jCategory * cat = mBudget->getCategory(currSelection);
     if(cat && cat->getCategories().size())
@@ -151,10 +146,6 @@ void MainWindow::updateSubCombo(QString currSelection)
 
         QTableWidgetItem * item = new QTableWidgetItem(QString(""));
         ui->transactionTable->setItem(row,2, item);
-
-        float total = cat->getAmount();
-        float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading());
-        float value = total - sum;
     }
 }
 
@@ -229,7 +220,7 @@ void MainWindow::tableTransChange(int row, int col)
 
 void MainWindow::tableTransDoubleClick(int row, int col)
 {
-    qDebug() << "EditRow:" << mEditRow << "[" << row << ":" << col << "]";
+    //qDebug() << "EditRow:" << mEditRow << "[" << row << ":" << col << "]";
 
     if((mEditRow >= 0) && (mEditRow != row))
     {
@@ -294,8 +285,8 @@ void MainWindow::tableTransDoubleClick(int row, int col)
         item->setText(description);
     }
 
-//    //link changes again
-//    connect(ui->transactionTable, SIGNAL(cellChanged(int,int)), this, SLOT(tableTransChange(int,int)));
+    //link changes again
+    connect(ui->transactionTable, SIGNAL(cellChanged(int,int)), this, SLOT(tableTransChange(int,int)));
 }
 
 void MainWindow::applyTransChanges()
