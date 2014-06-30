@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>477</height>
+    <height>593</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,69 +16,109 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <property name="tabsClosable">
-       <bool>false</bool>
-      </property>
-      <widget class="QWidget" name="summaryTab">
-       <attribute name="title">
-        <string>Summary</string>
-       </attribute>
-       <widget class="QTreeView" name="summaryTree">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>20</y>
-          <width>311</width>
-          <height>351</height>
-         </rect>
+     <layout class="QVBoxLayout" name="mainLayout">
+      <item>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="currentIndex">
+         <number>0</number>
         </property>
-       </widget>
-       <widget class="QWidget" name="horizontalLayoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>360</x>
-          <y>320</y>
-          <width>239</width>
-          <height>41</height>
-         </rect>
+        <property name="tabsClosable">
+         <bool>false</bool>
         </property>
-        <layout class="QHBoxLayout" name="bankLayout">
-         <item>
-          <widget class="QLabel" name="bankLabel">
-           <property name="minimumSize">
-            <size>
-             <width>40</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Bank</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="bankEdit"/>
-         </item>
-        </layout>
+        <widget class="QWidget" name="summaryTab">
+         <attribute name="title">
+          <string>Summary</string>
+         </attribute>
+         <widget class="QTreeView" name="summaryTree">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>591</width>
+            <height>401</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="transactionTab">
+         <property name="contextMenuPolicy">
+          <enum>Qt::PreventContextMenu</enum>
+         </property>
+         <attribute name="title">
+          <string>Transaction</string>
+         </attribute>
+         <widget class="QWidget" name="verticalLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>6</x>
+            <y>10</y>
+            <width>601</width>
+            <height>361</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="transactionLayout">
+           <item>
+            <widget class="QTableWidget" name="transactionTable">
+             <property name="rowCount">
+              <number>10</number>
+             </property>
+             <property name="columnCount">
+              <number>4</number>
+             </property>
+             <attribute name="verticalHeaderDefaultSectionSize">
+              <number>19</number>
+             </attribute>
+             <row/>
+             <row/>
+             <row/>
+             <row/>
+             <row/>
+             <row/>
+             <row/>
+             <row/>
+             <row/>
+             <row/>
+             <column>
+              <property name="text">
+               <string>Date</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Category</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Description</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Amount</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="leftLabel">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="diffLabel">
         <property name="enabled">
          <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>370</x>
-          <y>285</y>
-          <width>221</width>
-          <height>21</height>
-         </rect>
         </property>
         <property name="font">
          <font>
@@ -94,71 +134,31 @@
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
-      </widget>
-      <widget class="QWidget" name="transactionTab">
-       <property name="contextMenuPolicy">
-        <enum>Qt::PreventContextMenu</enum>
-       </property>
-       <attribute name="title">
-        <string>Transaction</string>
-       </attribute>
-       <widget class="QWidget" name="verticalLayoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>6</x>
-          <y>10</y>
-          <width>601</width>
-          <height>361</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="transactionLayout">
-         <item>
-          <widget class="QTableWidget" name="transactionTable">
-           <property name="rowCount">
-            <number>10</number>
-           </property>
-           <property name="columnCount">
-            <number>4</number>
-           </property>
-           <attribute name="verticalHeaderDefaultSectionSize">
-            <number>19</number>
-           </attribute>
-           <row/>
-           <row/>
-           <row/>
-           <row/>
-           <row/>
-           <row/>
-           <row/>
-           <row/>
-           <row/>
-           <row/>
-           <column>
-            <property name="text">
-             <string>Date</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Category</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Description</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Amount</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-     </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="bankLayout">
+        <item>
+         <widget class="QLabel" name="bankLabel">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bank</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="bankEdit"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -264,50 +264,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>tabWidget</sender>
-   <signal>currentChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>fillTree()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>319</x>
-     <y>244</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>319</x>
-     <y>238</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>bankEdit</sender>
    <signal>editingFinished()</signal>
    <receiver>MainWindow</receiver>
    <slot>updateBank()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>513</x>
-     <y>403</y>
+     <x>342</x>
+     <y>551</y>
     </hint>
     <hint type="destinationlabel">
      <x>319</x>
-     <y>238</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>transactionTable</sender>
-   <signal>cellDoubleClicked(int,int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>tableTransDoubleClick(int,int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>66</x>
-     <y>88</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>319</x>
-     <y>238</y>
+     <y>296</y>
     </hint>
    </hints>
   </connection>

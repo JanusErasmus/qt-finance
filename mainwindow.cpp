@@ -17,13 +17,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mSubCombo = 0;
     mEditRow = -1;
 
+  //  mStatusLabel = new QLabel();
+
     ui->setupUi(this);
     ui->transactionTable->setColumnWidth(0,100);
     ui->transactionTable->setColumnWidth(2,284);
     ui->transactionTable->horizontalHeader()->setSectionResizeMode (QHeaderView::Fixed);
     ui->transactionTable->verticalHeader()->setSectionResizeMode (QHeaderView::Fixed);
 
-    ui->diffLabel->setVisible(0);
+//    ui->diffLabel->setText("");
+
+   // ui->statusBar->addPermanentWidget(mStatusLabel);
 
     setWindowTitle("qFinance");
 
@@ -65,6 +69,9 @@ void MainWindow::insertNewEntryRow()
     item->setData(Qt::EditRole, QDate::currentDate());
     ui->transactionTable->setItem(row,0, item);
 
+    item = new QTableWidgetItem(QString(""));
+     ui->transactionTable->setItem(row,3, item);
+
     mMainCombo = new QComboBox();
     connect(mMainCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateSubCombo(QString)));
     fillCombo(mMainCombo);
@@ -75,10 +82,17 @@ void MainWindow::insertNewEntryRow()
 
 void MainWindow::fillCombo(QComboBox * main)
 {
+    int k = 0;
     jCategory * cat;
     foreach(cat, mBudget->getCategories())
     {
+        float total = cat->getAmount();
+        float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading());
+        float value = total - sum;
+
         main->addItem(cat->getHeading());
+        main->setItemData(k, QLocale().toCurrencyString(value), Qt::ToolTipRole);
+        k++;
     }
 }
 
@@ -87,10 +101,18 @@ void MainWindow::fillCombo(QComboBox * sub, jCategory * cat)
     if(!sub)
         return;
 
+    int k = 0;
     jCategory::sCategory * subCat;
     foreach(subCat, cat->getCategories())
     {
+        float total = subCat->amount;
+        float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading(), subCat->name);
+        float value = total - sum;
+
         sub->addItem(subCat->name);
+        sub->setItemData(k, QLocale().toCurrencyString(value), Qt::ToolTipRole);
+
+        k++;
     }
 }
 
@@ -112,27 +134,84 @@ void MainWindow::updateSubCombo(QString currSelection)
         }
 
          mSubCombo = new QComboBox();
+         connect(mSubCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateLeftLabel(QString)));
+
          fillCombo(mSubCombo, cat);
          ui->transactionTable->setCellWidget(row,2,mSubCombo);
+
+
     }
     else
     {
+        if(mSubCombo)
+            disconnect(mSubCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateLeftLabel(QString)));
+
         ui->transactionTable->removeCellWidget(row,2);        
         mSubCombo = 0;
+
         QTableWidgetItem * item = new QTableWidgetItem(QString(""));
         ui->transactionTable->setItem(row,2, item);
+
+        float total = cat->getAmount();
+        float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading());
+        float value = total - sum;
+
+        QString leftStr = cat->getHeading() + ": " + QLocale().toCurrencyString(value);
+        ui->leftLabel->setText(leftStr);
+    }
+}
+
+void MainWindow::updateLeftLabel(QString subString)
+{
+    int row = ui->transactionTable->rowCount() - 1;
+    QComboBox * box = (QComboBox *)ui->transactionTable->cellWidget(row, 1);
+    QString category = box->currentText();
+
+    //qDebug() << category << subString;
+
+    float total = -1;
+
+    jCategory * cat;
+    foreach(cat, mBudget->getCategories())
+    {
+        if(cat->getHeading() == category)
+        {
+            jCategory::sCategory * sCat;
+            foreach(sCat, cat->getCategories())
+            {
+                if(sCat->name == subString)
+                {total = sCat->amount;
+                    break;
+                }
+            }
+        }
+    }
+
+    if(total >= 0)
+    {
+        float sum = mBudget->getTransactionList()->sumTransactions(category, subString);
+        float value = total - sum;
+
+        QString leftStr = category + " - " + subString + ": " + QLocale().toCurrencyString(value);
+        ui->leftLabel->setText(leftStr);
+    }
+    else
+    {
+        ui->leftLabel->setText("");
     }
 }
 
 
 void MainWindow::tableTransChange(int row, int col)
 {
-    qDebug() << "Changed:" << row << col;
+    //qDebug() << "Changed:" << row << col;
 
     if(mEditRow >= 0)
     {
         if(col == 3)
             applyTransChanges();
+
+        updateBank();
 
         return;
     }
@@ -187,6 +266,8 @@ void MainWindow::tableTransChange(int row, int col)
 
         insertNewEntryRow();
     }
+
+    updateBank();
 }
 
 void MainWindow::tableTransDoubleClick(int row, int col)
@@ -346,13 +427,14 @@ void MainWindow::openBudget()
      foreach(cat, mBudget->getCategories())
      {
          QStandardItem * item = new QStandardItem(cat->getHeading());
+         item->setToolTip(QLocale().toCurrencyString(cat->getAmount()));
          model->setItem(r, 0, item);
 
          if(!cat->getCategories().size())
          {
              float total = cat->getAmount();
              float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading());
-                float value = total - sum;
+             float value = total - sum;
 
              QString amountStr = QLocale().toCurrencyString(value);
              QStandardItem * amount = new QStandardItem(amountStr);
@@ -391,13 +473,12 @@ void MainWindow::updateBank()
     float amount =  mBudget->getTransactionList()->sumTransactions();
     float diff = (mBudget->sumCategories() - amount) - bank;
 
-    qDebug() << "Bank change diff:" << diff;
+    //qDebug() << "Bank change diff:" << diff;
     mBudget->setBank(bank);
 
     if(diff != 0)
     {
         ui->diffLabel->setText(QLocale().toCurrencyString(diff));
-        ui->diffLabel->setVisible(1);
 
         if(diff < 0)
         {
@@ -413,7 +494,7 @@ void MainWindow::updateBank()
         }
     }
     else
-        ui->diffLabel->setVisible(0);
+        ui->diffLabel->setText("");
 }
 
  QList<QStandardItem*> MainWindow::fillCategory(jCategory *cat, jCategory::sCategory * subCat)
@@ -428,6 +509,7 @@ void MainWindow::updateBank()
       QString amountStr = QLocale().toCurrencyString(value);
 
       QStandardItem *name = new QStandardItem( nameStr );
+      name->setToolTip(QLocale().toCurrencyString(subCat->amount));
       name->setEditable( false );
 
       lst.append(name);

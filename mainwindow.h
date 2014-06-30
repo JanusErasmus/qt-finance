@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QComboBox>
 #include <QStandardItemModel>
+#include <QLabel>
 
 #include "jbudget.h"
 
@@ -13,6 +14,8 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+    //QLabel * mStatusLabel;
 
     jBudget * mBudget;
 
@@ -44,6 +47,8 @@ public slots:
 
      void fillTree();
      void updateBank();
+
+     void updateLeftLabel(QString subString);
 
      QBrush getBrush(float val);
 
