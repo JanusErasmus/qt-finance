@@ -17,13 +17,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mSubCombo = 0;
     mEditRow = -1;
 
-  //  mStatusLabel = new QLabel();
+  setWindowFlags(Qt::MSWindowsFixedSizeDialogHint);
 
     ui->setupUi(this);
-    ui->transactionTable->setColumnWidth(0,100);
-    ui->transactionTable->setColumnWidth(2,284);
+    ui->transactionTable->setColumnWidth(0,70);
+    ui->transactionTable->setColumnWidth(2,195);
     ui->transactionTable->horizontalHeader()->setSectionResizeMode (QHeaderView::Fixed);
     ui->transactionTable->verticalHeader()->setSectionResizeMode (QHeaderView::Fixed);
+
+    ui->statusBar->setSizeGripEnabled(false);
 
 //    ui->diffLabel->setText("");
 
@@ -268,6 +270,7 @@ void MainWindow::tableTransChange(int row, int col)
     }
 
     updateBank();
+    fillTree();
 }
 
 void MainWindow::tableTransDoubleClick(int row, int col)
@@ -388,6 +391,8 @@ void MainWindow::applyTransChanges()
 
     mEditRow = -1;
     insertNewEntryRow();
+
+    fillTree();
 }
 
 void MainWindow::editCategoryWindow()
@@ -422,6 +427,7 @@ void MainWindow::openBudget()
 
      //setup default values of add transaction window
      QStandardItemModel * model = new QStandardItemModel( mBudget->getCategories().size(), 2 );
+
      jCategory * cat;
      int r = 0;
      foreach(cat, mBudget->getCategories())
@@ -457,10 +463,13 @@ void MainWindow::openBudget()
          r++;
      }
 
+
      model->setHorizontalHeaderItem( 0, new QStandardItem( "Categories" ) );
      model->setHorizontalHeaderItem( 1, new QStandardItem( "Amount" ) );
 
      ui->summaryTree->setModel( model );
+     ui->summaryTree->header()->resizeSection(0, 120);
+     ui->summaryTree->header()->resizeSection(1, 70);
      ui->summaryTree->expandAll();
 
      updateBank();
