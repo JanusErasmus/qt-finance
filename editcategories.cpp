@@ -66,6 +66,8 @@ void editCategories::fillTree()
     model->setHorizontalHeaderItem( 1, new QStandardItem( "Amount" ) );
 
     ui->categoryTree->setModel( model );
+    ui->categoryTree->header()->resizeSection(0, 120);
+    ui->categoryTree->header()->resizeSection(1, 70);
     ui->categoryTree->expandAll();
 
     float income = ui->incomeEdit->text().toFloat();

@@ -48,8 +48,6 @@ public slots:
      void fillTree();
      void updateBank();
 
-     void updateLeftLabel(QString subString);
-
      QBrush getBrush(float val);
 
 private:

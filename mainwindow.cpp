@@ -120,23 +120,24 @@ void MainWindow::fillCombo(QComboBox * sub, jCategory * cat)
 
 void MainWindow::updateSubCombo(QString currSelection)
 {
+    qDebug() << mEditRow << currSelection;
+
     int row = ui->transactionTable->rowCount() - 1;
 
     if(mEditRow >= 0)
         row = mEditRow;
-    //qDebug() << currSelection;
+
+    qDebug() << "Row" << row;
 
 
     jCategory * cat = mBudget->getCategory(currSelection);
     if(cat && cat->getCategories().size())
     {
         if(mSubCombo)
-        {
             delete mSubCombo;
-        }
 
          mSubCombo = new QComboBox();
-         connect(mSubCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateLeftLabel(QString)));
+
 
          fillCombo(mSubCombo, cat);
          ui->transactionTable->setCellWidget(row,2,mSubCombo);
@@ -145,10 +146,7 @@ void MainWindow::updateSubCombo(QString currSelection)
     }
     else
     {
-        if(mSubCombo)
-            disconnect(mSubCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateLeftLabel(QString)));
-
-        ui->transactionTable->removeCellWidget(row,2);        
+        ui->transactionTable->removeCellWidget(row,2);
         mSubCombo = 0;
 
         QTableWidgetItem * item = new QTableWidgetItem(QString(""));
@@ -157,52 +155,8 @@ void MainWindow::updateSubCombo(QString currSelection)
         float total = cat->getAmount();
         float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading());
         float value = total - sum;
-
-        QString leftStr = cat->getHeading() + ": " + QLocale().toCurrencyString(value);
-        ui->leftLabel->setText(leftStr);
     }
 }
-
-void MainWindow::updateLeftLabel(QString subString)
-{
-    int row = ui->transactionTable->rowCount() - 1;
-    QComboBox * box = (QComboBox *)ui->transactionTable->cellWidget(row, 1);
-    QString category = box->currentText();
-
-    //qDebug() << category << subString;
-
-    float total = -1;
-
-    jCategory * cat;
-    foreach(cat, mBudget->getCategories())
-    {
-        if(cat->getHeading() == category)
-        {
-            jCategory::sCategory * sCat;
-            foreach(sCat, cat->getCategories())
-            {
-                if(sCat->name == subString)
-                {total = sCat->amount;
-                    break;
-                }
-            }
-        }
-    }
-
-    if(total >= 0)
-    {
-        float sum = mBudget->getTransactionList()->sumTransactions(category, subString);
-        float value = total - sum;
-
-        QString leftStr = category + " - " + subString + ": " + QLocale().toCurrencyString(value);
-        ui->leftLabel->setText(leftStr);
-    }
-    else
-    {
-        ui->leftLabel->setText("");
-    }
-}
-
 
 void MainWindow::tableTransChange(int row, int col)
 {
@@ -290,6 +244,7 @@ void MainWindow::tableTransDoubleClick(int row, int col)
 
     //stop change links
     disconnect(ui->transactionTable, SIGNAL(cellChanged(int,int)), this, SLOT(tableTransChange(int,int)));
+
     //stop combo links
     disconnect(mMainCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateSubCombo(QString)));
 
@@ -339,8 +294,8 @@ void MainWindow::tableTransDoubleClick(int row, int col)
         item->setText(description);
     }
 
-    //link changes again
-    connect(ui->transactionTable, SIGNAL(cellChanged(int,int)), this, SLOT(tableTransChange(int,int)));
+//    //link changes again
+//    connect(ui->transactionTable, SIGNAL(cellChanged(int,int)), this, SLOT(tableTransChange(int,int)));
 }
 
 void MainWindow::applyTransChanges()
