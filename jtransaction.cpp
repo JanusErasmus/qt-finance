@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "jtransaction.h"
 
 jTransaction::jTransaction()
@@ -20,6 +22,11 @@ jTransaction::jTransaction(sData data)
     mAmount = data.amount;
 }
 
+void jTransaction::debugShow()
+{
+    qDebug() << mCategory << mDescription << mAmount;
+}
+
 void jTransaction::debugShow(sData data)
 {
     qDebug("%s R%f", data.description, data.amount);
@@ -32,14 +39,18 @@ void jTransaction::setRow(QTableWidget* table, int row)
     QTableWidgetItem * catTableItem;
     QTableWidgetItem * amountTableItem;
 
-    QLocale sar(QLocale::English, QLocale::SouthAfrica);
-
-
     dateTableItem = new QTableWidgetItem();
+    dateTableItem->setFlags(dateTableItem->flags() ^ Qt::ItemIsEditable);
     dateTableItem->setData(Qt::EditRole, mDate);
+
     descTableItem = new QTableWidgetItem(mDescription);
+    descTableItem->setFlags(descTableItem->flags() ^ Qt::ItemIsEditable);
+
     catTableItem = new QTableWidgetItem(mCategory);
-    amountTableItem = new QTableWidgetItem(sar.toCurrencyString(mAmount));
+    catTableItem->setFlags(catTableItem->flags() ^ Qt::ItemIsEditable);
+
+    amountTableItem = new QTableWidgetItem(QLocale().toCurrencyString(mAmount));
+    amountTableItem->setFlags(amountTableItem->flags() ^ Qt::ItemIsEditable);
 
     table->setItem(row,0, dateTableItem);
     table->setItem(row,1, catTableItem);

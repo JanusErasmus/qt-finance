@@ -13,6 +13,7 @@ public:
     jTransactionList();
     ~jTransactionList();
 
+    void updateEntry(int idx,jTransaction * entry);
     void append(jTransaction* entry);
     int size();
     jTransaction * at(int idx);

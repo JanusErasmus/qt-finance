@@ -37,6 +37,63 @@
          </rect>
         </property>
        </widget>
+       <widget class="QWidget" name="horizontalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>320</y>
+          <width>239</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="bankLayout">
+         <item>
+          <widget class="QLabel" name="bankLabel">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Bank</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="bankEdit"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QLabel" name="diffLabel">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>285</y>
+          <width>221</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Diff</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="transactionTab">
        <property name="contextMenuPolicy">
@@ -215,6 +272,38 @@
     <hint type="sourcelabel">
      <x>319</x>
      <y>244</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bankEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>updateBank()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>513</x>
+     <y>403</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>transactionTable</sender>
+   <signal>cellDoubleClicked(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>tableTransDoubleClick(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>66</x>
+     <y>88</y>
     </hint>
     <hint type="destinationlabel">
      <x>319</x>

@@ -50,6 +50,8 @@ public:
     QString getDescription(){ return mDescription; }
     float getAmount() { return mAmount; }
 
+    void debugShow();
+
     sData getData();
     void debugShow(sData data);
 

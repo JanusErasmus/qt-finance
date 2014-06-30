@@ -42,6 +42,11 @@ float jTransactionList::sumTransactions(QString category, QString subCategory)
     return sum;
 }
 
+void jTransactionList::updateEntry(int idx, jTransaction *entry)
+{
+    mList.replace(idx, entry);
+}
+
 void jTransactionList::append(jTransaction* entry)
 {
     mList.append(entry);

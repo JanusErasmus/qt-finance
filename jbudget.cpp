@@ -5,6 +5,7 @@
 jBudget::jBudget(QString fileName)
 {
     mIncome = 0;
+    mBank = 0;
     mBudgetFile = new QFile(fileName);
     mTransList = new jTransactionList();
 
@@ -24,7 +25,7 @@ jBudget::jBudget(QString fileName)
 
     if(mBudgetFile->exists())
     {
-        qDebug("File exists");
+        //qDebug("File exists");
         readBudget();
     }
 }
@@ -39,11 +40,15 @@ void jBudget::readBudget()
     //first 4 bytes is the version (qint32)
     qint32 version = 0;
     mBudgetFile->read((char*)&version, 4);
-    qDebug("Budget File version 0x%08X", version);
+    //qDebug("Budget File version 0x%08X", version);
 
     //the next 4 bytes is income
     mBudgetFile->read((char*)&mIncome, 4);
-    qDebug("Income %f", mIncome);
+    //qDebug("Income %f", mIncome);
+
+    //the next 4 bytes is income
+    mBudgetFile->read((char*)&mBank, 4);
+    //qDebug("Bank %f", mBank);
 
     readTransactions();
     readCategories();
@@ -88,6 +93,28 @@ jCategory* jBudget::getCategory(QString heading)
     return 0;
 }
 
+float jBudget::sumCategories()
+{
+    float sum = 0;
+    jCategory * cat;
+    foreach(cat, mCategories)
+    {
+        if(!cat->getCategories().size())
+        {
+            sum += cat->getAmount();
+        }
+
+        QList<jCategory::sCategory*> subCats = cat->getCategories();
+        jCategory::sCategory * subCat;
+        int i = 0;
+        foreach(subCat, subCats)
+        {
+            sum += subCat->amount;
+        }
+    }
+
+    return sum;
+}
 
 bool jBudget::save()
 {
@@ -102,6 +129,9 @@ bool jBudget::save()
 
     //next 4 bytes is the income
     mBudgetFile->write((const char*)&mIncome, 4);
+
+    //next 4 bytes is the bank
+    mBudgetFile->write((const char*)&mBank, 4);
 
     //next 4 bytes lenght of the list
     quint32 length = mTransList->size();

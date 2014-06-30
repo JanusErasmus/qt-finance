@@ -34,8 +34,7 @@ void editCategories::fillTree()
 
         if(!cat->getCategories().size())
         {
-            QLocale sar(QLocale::English, QLocale::SouthAfrica);
-            QString amountStr = sar.toCurrencyString(cat->getAmount());
+            QString amountStr = QLocale().toCurrencyString(cat->getAmount());
             QStandardItem * amount = new QStandardItem(amountStr);
             amount->setSelectable(false);
             model->setItem(r, 1, amount);
@@ -69,23 +68,20 @@ void editCategories::fillTree()
     ui->categoryTree->setModel( model );
     ui->categoryTree->expandAll();
 
-    QLocale sar(QLocale::English, QLocale::SouthAfrica);
-
     float income = ui->incomeEdit->text().toFloat();
     mBudget->setIncome(income);
     float diff = income - sum;
 
-    ui->differenceValue->setText(sar.toCurrencyString(diff));
+    ui->differenceValue->setText(QLocale().toCurrencyString(diff));
 
 }
 
 QList<QStandardItem*> editCategories::fillCategory(jCategory::sCategory * cat)
 {
     QList<QStandardItem*> lst;
-     QLocale sar(QLocale::English, QLocale::SouthAfrica);
 
      QString nameStr = QString(cat->name);
-     QString amountStr = sar.toCurrencyString(cat->amount);
+     QString amountStr = QLocale().toCurrencyString(cat->amount);
 
      QStandardItem *name = new QStandardItem( nameStr );
      name->setEditable( false );

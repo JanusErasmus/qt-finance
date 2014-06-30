@@ -18,6 +18,7 @@ class MainWindow : public QMainWindow
 
     QComboBox* mSubCombo;
     QComboBox* mMainCombo;
+    int mEditRow;
 
     void openBudget(QString filename);
     void insertNewEntryRow();
@@ -25,6 +26,8 @@ class MainWindow : public QMainWindow
     void fillCombo(QComboBox * sub, jCategory * cat);
 
     QList<QStandardItem*> fillCategory(jCategory * cat, jCategory::sCategory * subCat);
+
+    void applyTransChanges();
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -37,8 +40,12 @@ public slots:
 
     void updateSubCombo(QString currSelection);
     void tableTransChange(int row, int col);
+    void tableTransDoubleClick(int row, int col);
 
      void fillTree();
+     void updateBank();
+
+     QBrush getBrush(float val);
 
 private:
     Ui::MainWindow *ui;

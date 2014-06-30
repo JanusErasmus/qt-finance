@@ -11,6 +11,7 @@ class jBudget
 {
     QFile * mBudgetFile;
     float mIncome;
+    float mBank;
 
     jTransactionList* mTransList;
     QList<jCategory*> mCategories;
@@ -29,12 +30,14 @@ public:
 
     float getIncome(){ return mIncome; }
     void setIncome(float income){ mIncome = income; }
+    float getBank(){ return mBank; }
+    void setBank(float bank){ mBank = bank; }
     jTransactionList * getTransactionList();
 
     void addCategory(QString heading, float amount);
     void removeCategory(QString heading);
     jCategory* getCategory(QString heading);
-
+    float sumCategories();
 
     QList<jCategory*> getCategories(){ return mCategories; }
 
