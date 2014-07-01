@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QFileInfo>
 
 #include "jbudget.h"
 
@@ -42,6 +43,17 @@ void jBudget::readBudget()
 
 
     mBudgetFile->close();
+}
+
+QString jBudget::getPath()
+{
+    if(mBudgetFile)
+      {
+        QFileInfo fileInfo(mBudgetFile->fileName());
+        return fileInfo.absoluteFilePath();
+    }
+
+        return 0;
 }
 
 jTransactionList * jBudget::getTransactionList()

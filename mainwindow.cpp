@@ -382,7 +382,7 @@ void MainWindow::openBudget(QString filename)
 
  void MainWindow::saveBudgetAs()
  {
-     QString path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+     QString path = mBudget->getPath();
      QString fileName = QFileDialog::getSaveFileName(this, tr("Save Budget As"), path,tr("jBudget Files (*.jbud)"));
      if(!fileName.isEmpty())
      {
@@ -529,7 +529,8 @@ void MainWindow::updateBank()
  void MainWindow::generateNextMonth()
  {
      qDebug()<< "nextMonth";
-     QString fileName = QFileDialog::getSaveFileName(this, tr("Save next month budget"),".",tr("jBudget Files (*.jbud)"));
+     QString path = mBudget->getPath();
+     QString fileName = QFileDialog::getSaveFileName(this, tr("Save next month budget"), path ,tr("jBudget Files (*.jbud)"));
      if(!fileName.isEmpty())
      {
          qDebug() << fileName;
@@ -565,8 +566,12 @@ void MainWindow::updateBank()
              float total = cat->getAmount();
              float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading());
              float value = total - sum;
-             t = new jTransaction(QDate().currentDate(), cat->getHeading(), "Previous Month", -value);
-             nextBudget->getTransactionList()->append(t);
+
+             if(value != 0)
+             {
+                 t = new jTransaction(QDate().currentDate(), cat->getHeading(), "Previous Month", -value);
+                 nextBudget->getTransactionList()->append(t);
+             }
          }
 
          QList<jCategory::sCategory*> subCats = cat->getCategories();
@@ -579,8 +584,11 @@ void MainWindow::updateBank()
              float total = subCat->amount;
              float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading(), subCat->name);
              float value = total - sum;
-             t = new jTransaction(QDate().currentDate(), cat->getHeading(), subCat->name, -value);
-             nextBudget->getTransactionList()->append(t);
+             if(value != 0)
+             {
+                 t = new jTransaction(QDate().currentDate(), cat->getHeading(), subCat->name, -value);
+                 nextBudget->getTransactionList()->append(t);
+             }
          }
 
          r++;

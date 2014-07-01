@@ -42,6 +42,8 @@ public:
 
     QList<jCategory*> getCategories(){ return mCategories; }
 
+    QString getPath();
+
     bool save();
     bool save(QString fileName);
 };
