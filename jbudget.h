@@ -28,6 +28,7 @@ public:
     jBudget(QString fileName);
     ~jBudget();
 
+
     float getIncome(){ return mIncome; }
     void setIncome(float income){ mIncome = income; }
     float getBank(){ return mBank; }
@@ -41,9 +42,8 @@ public:
 
     QList<jCategory*> getCategories(){ return mCategories; }
 
-
-
     bool save();
+    bool save(QString fileName);
 };
 
 #endif // JBUDGET_H

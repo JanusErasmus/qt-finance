@@ -3,6 +3,7 @@
 #include <QDateEdit>
 #include <QStandardItemModel>
 #include <QPalette>
+#include <QStandardPaths>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -27,37 +28,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->statusBar->setSizeGripEnabled(false);
 
-//    ui->diffLabel->setText("");
-
-   // ui->statusBar->addPermanentWidget(mStatusLabel);
 
     setWindowTitle("qFinance");
 
-    openBudget("june.jbud");
+    //openBudget("june.jbud");
 
-}
-
-void MainWindow::openBudget(QString filename)
-{
-    qDebug() << "Opening" << filename;
-
-    if(mBudget)
-    {
-        delete mBudget;
-        ui->transactionTable->clear();
-    }
-
-    mBudget = new jBudget(filename);
-
-    //fill transaction list
-    jTransactionList * lst = mBudget->getTransactionList();
-    lst->fillTable(ui->transactionTable);
-    insertNewEntryRow();
-
-    ui->bankEdit->setText(QString::number(mBudget->getBank()));
-
-    //fill summary tree
-    fillTree();
 }
 
 void MainWindow::insertNewEntryRow()
@@ -354,17 +329,83 @@ void MainWindow::editCategoryWindow()
 
 void MainWindow::openBudget()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),".",tr("jBudget Files (*.jbud)"));
+
+
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);//getenv("APPDATA");
+
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), path,tr("jBudget Files (*.jbud)"));
     if(!fileName.isEmpty())
     {
         openBudget(fileName);
     }
 }
 
+
+void MainWindow::openBudget(QString filename)
+{
+    qDebug() << "Opening" << filename;
+
+    if(mBudget)
+    {
+        ui->transactionTable->clear();
+        ui->summaryTree->reset();
+        delete mBudget;
+    }
+
+    QFile file(filename);
+    QFileInfo fileInfo(file.fileName());
+    QString name = fileInfo.fileName().split(".").at(0);
+    setWindowTitle("qFinance - " + name);
+
+    ui->actionEdit->setEnabled(1);
+
+    mBudget = new jBudget(filename);
+
+    disconnect(ui->transactionTable, SIGNAL(cellChanged(int,int)), this, SLOT(tableTransChange(int,int)));
+
+    //fill transaction list
+    jTransactionList * lst = mBudget->getTransactionList();
+    lst->fillTable(ui->transactionTable);
+
+    insertNewEntryRow();
+
+    ui->bankEdit->setText(QString::number(mBudget->getBank()));
+
+    //fill summary tree
+    fillTree();
+}
+
  void MainWindow::saveBudget()
  {
      if(mBudget->save())
          qDebug("File was written");
+ }
+
+ void MainWindow::saveBudgetAs()
+ {
+     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Budget As"),".",tr("jBudget Files (*.jbud)"));
+     if(!fileName.isEmpty())
+     {
+         qDebug() << fileName;
+
+         QFile newFile(fileName);
+         bool exists = newFile.exists();
+
+         if(exists)
+             QFile::remove(fileName);
+
+         if(mBudget->save(fileName))
+         {
+             qDebug("File was written");
+
+             QFile file(fileName);
+             QFileInfo fileInfo(file.fileName());
+             QString name = fileInfo.fileName().split(".").at(0);
+             setWindowTitle("qFinance - " + name);
+         }
+     }
+
+
  }
 
  void MainWindow::fillTree()
@@ -475,6 +516,71 @@ void MainWindow::updateBank()
       lst.append(amount);
 
       return lst;
+ }
+
+ void MainWindow::generateNextMonth()
+ {
+     qDebug()<< "nextMonth";
+     QString fileName = QFileDialog::getSaveFileName(this, tr("Save next month budget"),".",tr("jBudget Files (*.jbud)"));
+     if(!fileName.isEmpty())
+     {
+         qDebug() << fileName;
+
+         QFile newFile(fileName);
+         bool exists = newFile.exists();
+         newFile.close();
+
+         if(exists)
+             QFile::remove(fileName);
+
+         generateNextBudget(fileName);
+     }
+ }
+
+ jBudget * MainWindow::generateNextBudget(QString filename)
+ {
+     jBudget * nextBudget = new jBudget(filename);
+
+     nextBudget->setBank(mBudget->getBank() + mBudget->getIncome());
+     nextBudget->setIncome(mBudget->getIncome());
+
+     jTransaction * t;
+
+     jCategory * cat;
+     int r = 0;
+     foreach(cat, mBudget->getCategories())
+     {
+         nextBudget->addCategory(cat->getHeading(), cat->getAmount());
+
+         if(!cat->getCategories().size())
+         {
+             float total = cat->getAmount();
+             float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading());
+             float value = total - sum;
+             t = new jTransaction(QDate().currentDate(), cat->getHeading(), "Previous Month", -value);
+             nextBudget->getTransactionList()->append(t);
+         }
+
+         QList<jCategory::sCategory*> subCats = cat->getCategories();
+         jCategory::sCategory * subCat;
+         foreach(subCat, subCats)
+         {
+
+             nextBudget->getCategories().at(r)->addSubCategory(subCat->name, subCat->amount);
+
+             float total = subCat->amount;
+             float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading(), subCat->name);
+             float value = total - sum;
+             t = new jTransaction(QDate().currentDate(), cat->getHeading(), subCat->name, -value);
+             nextBudget->getTransactionList()->append(t);
+         }
+
+         r++;
+     }
+
+     nextBudget->save();
+
+     return nextBudget;
  }
 
 QBrush MainWindow::getBrush(float val)

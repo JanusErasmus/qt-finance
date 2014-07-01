@@ -23,7 +23,6 @@ class MainWindow : public QMainWindow
     QComboBox* mMainCombo;
     int mEditRow;
 
-    void openBudget(QString filename);
     void insertNewEntryRow();
     void fillCombo(QComboBox * main);
     void fillCombo(QComboBox * sub, jCategory * cat);
@@ -32,14 +31,20 @@ class MainWindow : public QMainWindow
 
     void applyTransChanges();
 
+    jBudget * generateNextBudget(QString filename);
+
 public:
     explicit MainWindow(QWidget *parent = 0);
+
+    void openBudget(QString filename);
+
     ~MainWindow();
 
 public slots:
     void editCategoryWindow();
     void openBudget();
     void saveBudget();
+    void saveBudgetAs();
 
     void updateSubCombo(QString currSelection);
     void tableTransChange(int row, int col);
@@ -47,6 +52,8 @@ public slots:
 
      void fillTree();
      void updateBank();
+
+     void generateNextMonth();
 
      QBrush getBrush(float val);
 

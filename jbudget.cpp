@@ -9,20 +9,6 @@ jBudget::jBudget(QString fileName)
     mBudgetFile = new QFile(fileName);
     mTransList = new jTransactionList();
 
-//    jCategory * c = new jCategory("Sakgeld", 1000);
-//    c->addSubCategory("Koeldrank", 1000);
-//    c->addSubCategory("Snoepie", 1000);
-//    c->addSubCategory("Bier", 1000);
-//    mCategories.append(c);
-
-//    c = new jCategory("Spaar", 2);
-//    c->addSubCategory("TV", 1000);
-//    c->addSubCategory("Kar", 1000);
-//    mCategories.append(c);
-
-//    c = new jCategory("Bonus", 1000);
-//    mCategories.append(c);
-
     if(mBudgetFile->exists())
     {
         //qDebug("File exists");
@@ -114,6 +100,16 @@ float jBudget::sumCategories()
     }
 
     return sum;
+}
+
+bool jBudget::save(QString fileName)
+{
+    if(mBudgetFile)
+        delete mBudgetFile;
+
+     mBudgetFile = new QFile(fileName);
+
+     return save();
 }
 
 bool jBudget::save()

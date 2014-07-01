@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = qFinance
 TEMPLATE = app
 
+RC_FILE = qFinance.rc
 
 SOURCES += main.cpp\
         mainwindow.cpp \
