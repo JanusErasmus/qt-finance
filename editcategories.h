@@ -4,7 +4,7 @@
 #include <QModelIndex>
 #include <QStandardItemModel>
 
-#include "jBudget.h"
+#include "jbudget.h"
 
 namespace Ui {
 class editCategories;
