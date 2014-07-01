@@ -31,8 +31,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     setWindowTitle("qFinance");
 
-    //openBudget("june.jbud");
-
 }
 
 void MainWindow::insertNewEntryRow()
@@ -329,9 +327,7 @@ void MainWindow::editCategoryWindow()
 
 void MainWindow::openBudget()
 {
-
-
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);//getenv("APPDATA");
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), path,tr("jBudget Files (*.jbud)"));
     if(!fileName.isEmpty())
@@ -358,6 +354,9 @@ void MainWindow::openBudget(QString filename)
     setWindowTitle("qFinance - " + name);
 
     ui->actionEdit->setEnabled(1);
+    ui->actionNext_month->setEnabled(1);
+    ui->action_Save->setEnabled(1);
+    ui->actionSave_As->setEnabled(1);
 
     mBudget = new jBudget(filename);
 
@@ -383,7 +382,8 @@ void MainWindow::openBudget(QString filename)
 
  void MainWindow::saveBudgetAs()
  {
-     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Budget As"),".",tr("jBudget Files (*.jbud)"));
+     QString path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Budget As"), path,tr("jBudget Files (*.jbud)"));
      if(!fileName.isEmpty())
      {
          qDebug() << fileName;
@@ -404,8 +404,16 @@ void MainWindow::openBudget(QString filename)
              setWindowTitle("qFinance - " + name);
          }
      }
+ }
 
-
+ void MainWindow::newBudget()
+ {
+     QString path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+     QString fileName = QFileDialog::getSaveFileName(this, tr("New Budget"), path,tr("jBudget Files (*.jbud)"));
+     if(!fileName.isEmpty())
+     {
+         openBudget(fileName);
+     }
  }
 
  void MainWindow::fillTree()

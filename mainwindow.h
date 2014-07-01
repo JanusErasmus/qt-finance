@@ -45,6 +45,7 @@ public slots:
     void openBudget();
     void saveBudget();
     void saveBudgetAs();
+    void newBudget();
 
     void updateSubCombo(QString currSelection);
     void tableTransChange(int row, int col);

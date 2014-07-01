@@ -35,7 +35,7 @@
         <item>
          <widget class="QTableWidget" name="transactionTable">
           <property name="rowCount">
-           <number>10</number>
+           <number>0</number>
           </property>
           <property name="columnCount">
            <number>4</number>
@@ -43,16 +43,6 @@
           <attribute name="verticalHeaderDefaultSectionSize">
            <number>19</number>
           </attribute>
-          <row/>
-          <row/>
-          <row/>
-          <row/>
-          <row/>
-          <row/>
-          <row/>
-          <row/>
-          <row/>
-          <row/>
           <column>
            <property name="text">
             <string>Date</string>
@@ -137,6 +127,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="action_Open"/>
     <addaction name="action_Save"/>
     <addaction name="actionSave_As"/>
@@ -161,6 +152,9 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Save">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Save</string>
    </property>
@@ -179,13 +173,24 @@
    </property>
   </action>
   <action name="actionNext_month">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Next month...</string>
    </property>
   </action>
   <action name="actionSave_As">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save As...</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
    </property>
   </action>
  </widget>
@@ -293,6 +298,22 @@
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>saveBudgetAs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>296</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>newBudget()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
