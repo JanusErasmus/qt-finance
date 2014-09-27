@@ -104,7 +104,6 @@ float jBudget::sumCategories()
 
         QList<jCategory::sCategory*> subCats = cat->getCategories();
         jCategory::sCategory * subCat;
-        int i = 0;
         foreach(subCat, subCats)
         {
             sum += subCat->amount;

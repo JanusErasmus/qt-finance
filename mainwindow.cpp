@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mMainCombo = 0;
     mSubCombo = 0;
     mEditRow = -1;
+    mCurrentComboIndex = 0;
 
   setWindowFlags(Qt::MSWindowsFixedSizeDialogHint);
 
@@ -47,6 +48,7 @@ void MainWindow::insertNewEntryRow()
 
     mMainCombo = new QComboBox();
     connect(mMainCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateSubCombo(QString)));
+    connect(mMainCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAmount2Category(int)));
     fillCombo(mMainCombo);
     ui->transactionTable->setCellWidget(row,1,mMainCombo);
 
@@ -105,15 +107,17 @@ void MainWindow::updateSubCombo(QString currSelection)
             delete mSubCombo;
 
          mSubCombo = new QComboBox();
-
+         connect(mSubCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAmount2subCategory(int)));
 
          fillCombo(mSubCombo, cat);
          ui->transactionTable->setCellWidget(row,2,mSubCombo);
 
-
     }
     else
     {
+        if(mSubCombo)
+            disconnect(mSubCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAmount2subCategory(int)));
+
         ui->transactionTable->removeCellWidget(row,2);
         mSubCombo = 0;
 
@@ -122,9 +126,42 @@ void MainWindow::updateSubCombo(QString currSelection)
     }
 }
 
+void MainWindow::updateAmount2Category(int index)
+{
+    mCurrentComboIndex = index;
+
+    jCategory * cat = mBudget->getCategories().at(index);
+
+    if(cat->getCategories().size())
+        return;
+
+    float total = cat->getAmount();
+    float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading());
+    float value = total - sum;
+
+    ui->statusBar->showMessage("Current amount available for " + cat->getHeading() + " "+ QLocale().toCurrencyString(value));
+}
+
+void MainWindow::updateAmount2subCategory(int index)
+{
+    jCategory * cat = mBudget->getCategories().at(mCurrentComboIndex);
+    jCategory::sCategory * subCat = cat->getCategories().at(index);
+
+    float total = subCat->amount;
+    float sum = mBudget->getTransactionList()->sumTransactions(cat->getHeading(), subCat->name);
+    float value = total - sum;
+
+    ui->statusBar->showMessage("Current amount available for " + subCat->name + " "+ QLocale().toCurrencyString(value));
+}
 void MainWindow::tableTransChange(int row, int col)
 {
     //qDebug() << "Changed:" << row << col;
+
+    if(windowTitle().indexOf('*') < 0)
+    {
+        QString title = windowTitle().append("*");
+        setWindowTitle(title);
+    }
 
     if(mEditRow >= 0)
     {
@@ -211,6 +248,7 @@ void MainWindow::tableTransDoubleClick(int row, int col)
 
     //stop combo links
     disconnect(mMainCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateSubCombo(QString)));
+    disconnect(mMainCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAmount2Category(int)));
 
     ui->transactionTable->removeCellWidget(lastRow,0);
     ui->transactionTable->removeCellWidget(lastRow,1);
@@ -246,6 +284,7 @@ void MainWindow::tableTransDoubleClick(int row, int col)
 
     mMainCombo = new QComboBox();
     connect(mMainCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateSubCombo(QString)));
+    connect(mMainCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAmount2Category(int)));
     fillCombo(mMainCombo);
     mMainCombo->setCurrentText(catStr);
     ui->transactionTable->setCellWidget(row,1,mMainCombo);
@@ -378,6 +417,14 @@ void MainWindow::openBudget(QString filename)
  {
      if(mBudget->save())
          qDebug("File was written");
+
+     int idx = windowTitle().indexOf('*');
+     if(idx)
+     {
+         char *title = windowTitle().toLocal8Bit().data();
+         title[idx] = 0;
+         setWindowTitle(title);
+     }
  }
 
  void MainWindow::saveBudgetAs()
@@ -410,6 +457,7 @@ void MainWindow::openBudget(QString filename)
  {
      QString path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
      QString fileName = QFileDialog::getSaveFileName(this, tr("New Budget"), path,tr("jBudget Files (*.jbud)"));
+     fileName.append(".jbud");
      if(!fileName.isEmpty())
      {
          openBudget(fileName);

@@ -53,7 +53,7 @@ bool jCategory::getCategory(int idx, jCategory::sData &data)
         return false;
 
     data.amount = mCategories.at(idx)->amount;
-    strncpy((char*)data.category, mCategories.at(idx)->name.toLocal8Bit().data(), 32);
+    strncpy_s((char*)data.category, 32, mCategories.at(idx)->name.toLocal8Bit().data(), 32);
 
     return true;
 }

@@ -15,12 +15,11 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    //QLabel * mStatusLabel;
-
     jBudget * mBudget;
 
     QComboBox* mSubCombo;
     QComboBox* mMainCombo;
+    int mCurrentComboIndex;
     int mEditRow;
 
     void insertNewEntryRow();
@@ -47,7 +46,9 @@ public slots:
     void saveBudgetAs();
     void newBudget();
 
-    void updateSubCombo(QString currSelection);
+    void updateAmount2Category(int index);
+    void updateAmount2subCategory(int index);
+    void updateSubCombo(QString currSelection);    
     void tableTransChange(int row, int col);
     void tableTransDoubleClick(int row, int col);
 

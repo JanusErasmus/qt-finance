@@ -65,8 +65,8 @@ jTransaction::sData jTransaction::getData()
     data.month = mDate.month();
     data.day = mDate.day();
     data.amount = mAmount;
-    strncpy((char*)data.category, mCategory.toLocal8Bit().data(), 32);
-    strncpy((char*)data.description, mDescription.toLocal8Bit().data(), 64);
+    strncpy_s((char*)data.category, 32, mCategory.toLocal8Bit().data(), 32);
+    strncpy_s((char*)data.description, 64, mDescription.toLocal8Bit().data(), 64);
 
     return data;
 }
