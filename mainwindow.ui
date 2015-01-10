@@ -120,7 +120,7 @@
      <x>0</x>
      <y>0</y>
      <width>711</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuQBudget">
@@ -139,8 +139,15 @@
     </property>
     <addaction name="actionEdit"/>
    </widget>
+   <widget class="QMenu" name="menuTransaction">
+    <property name="title">
+     <string>Transaction</string>
+    </property>
+    <addaction name="actionOpen_List"/>
+   </widget>
    <addaction name="menuQBudget"/>
    <addaction name="menuCatgegory"/>
+   <addaction name="menuTransaction"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -206,6 +213,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionOpen_List">
+   <property name="text">
+    <string>Open List</string>
    </property>
   </action>
  </widget>
@@ -329,6 +341,22 @@
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>newBudget()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>296</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpen_List</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openListWindow()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

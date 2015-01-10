@@ -8,6 +8,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "addtransactions.h"
 #include "editcategories.h"
 #include "jtransactionlist.h"
 
@@ -364,6 +365,29 @@ void MainWindow::editCategoryWindow()
     }
 }
 
+void MainWindow::openListWindow()
+{
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Transaction List"), path,tr("CSV Files (*.csv)"));
+    if(!fileName.isEmpty())
+    {
+        addTransactions * transUi = new addTransactions(mBudget, fileName, this);
+
+        connect(transUi, SIGNAL(setAmount(float)), this, SLOT(updateBank(float)));
+
+        //read transaction values if OK
+        if(transUi->exec() == QDialog::Accepted)
+        {
+
+        }
+        disconnect(transUi, SIGNAL(setAmount(float)), this, SLOT(updateBank(float)));
+        delete transUi;
+    }
+
+
+}
+
 void MainWindow::openBudget()
 {
     QString path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
@@ -547,6 +571,13 @@ void MainWindow::updateBank()
     }
     else
         ui->diffLabel->setText("");
+}
+
+void MainWindow::updateBank(float amount)
+{
+    ui->bankEdit->setText(QString::number(amount));
+
+    updateBank();
 }
 
  QList<QStandardItem*> MainWindow::fillCategory(jCategory *cat, jCategory::sCategory * subCat)

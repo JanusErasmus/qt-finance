@@ -19,14 +19,19 @@ SOURCES += main.cpp\
     jbudget.cpp \
     jtransaction.cpp \
     jcategory.cpp \
-    editcategories.cpp
+    editcategories.cpp \
+    parsetransactions.cpp \
+    addtransactions.cpp
 
 HEADERS  += mainwindow.h \
     jtransactionlist.h \
     jbudget.h \
     jtransaction.h \
     jcategory.h \
-    editcategories.h
+    editcategories.h \
+    parsetransactions.h \
+    addtransactions.h
 
 FORMS    += mainwindow.ui \
-    editcategories.ui
+    editcategories.ui \
+    addtransactions.ui

@@ -40,6 +40,7 @@ public:
     ~MainWindow();
 
 public slots:
+    void openListWindow();
     void editCategoryWindow();
     void openBudget();
     void saveBudget();
@@ -54,6 +55,7 @@ public slots:
 
      void fillTree();
      void updateBank();
+     void updateBank(float amount);
 
      void generateNextMonth();
 
